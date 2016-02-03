@@ -65,7 +65,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Happer.Hosting\Happer.Hosting.csproj">
       <Project>{8fb75b54-a8d7-42b0-8e14-80cb48b91497}</Project>
-      <Name>Happer</Name>
+      <Name>Happer.Hosting</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
