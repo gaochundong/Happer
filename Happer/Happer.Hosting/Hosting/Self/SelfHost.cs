@@ -148,6 +148,8 @@ namespace Happer.Hosting.Self
 
             foreach (var prefix in GetPrefixes())
             {
+                // netsh http add urlacl url=http://+:222222/test
+                // netsh http add urlacl url=http://+:222222/test user=domain\user
                 if (!NetSh.AddUrlAcl(prefix, user))
                 {
                     return false;
