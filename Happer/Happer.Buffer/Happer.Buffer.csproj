@@ -44,7 +44,6 @@
     </Compile>
     <Compile Include="Deflection\BufferDeflector.cs" />
     <Compile Include="Validation\BufferValidator.cs" />
-    <Compile Include="CircularBuffer.cs" />
     <Compile Include="BufferManager\FixedByteBufferManager.cs" />
     <Compile Include="BufferManager\GrowingByteBufferManager.cs" />
     <Compile Include="BufferManager\IBufferManager.cs" />
