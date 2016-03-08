@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Happer</id>
+    <version>1.0.0.0</version>
+    <title>Happer</title>
+    <authors>Dennis Gao</authors>
+    <owners>Dennis Gao</owners>
+    <licenseUrl>https://github.com/gaochundong/Happer/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/gaochundong/Happer</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Happer is a library for building HTTP/WebSocket based services.</description>
+    <copyright>Copyright © 2015-2016 Dennis Gao.</copyright>
+    <dependencies>
+      <dependency id="Logrila.Logging" version="1.0.0" />
+	  <dependency id="Newtonsoft.Json" version="8.0.2" />
+    </dependencies>
+  </metadata>
+</package>
