@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Logging", "Happer.Logging\Happer.Logging.csproj", "{7ADA144A-A176-437B-812E-889B6AA2536E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Logging.NLogIntegration", "Happer.Logging.NLogIntegration\Happer.Logging.NLogIntegration.csproj", "{BE0E384E-A89C-4CC1-AE7C-E390AC8349F3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Buffer", "Happer.Buffer\Happer.Buffer.csproj", "{555192B1-C597-4279-BF19-00CA30C6DF8D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Http", "Happer.Http\Happer.Http.csproj", "{7EB615AE-71B7-4D75-8E43-1CEF143E0B33}"
@@ -28,22 +24,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.TestHttpServer", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.TestHttpClient", "Tests\Happer.TestHttpClient\Happer.TestHttpClient.csproj", "{3231D52B-1EE7-4CD5-B72D-96E8DC267E68}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{AD9DF6C4-BA79-4B4E-985C-EE1021B3DCCF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7ADA144A-A176-437B-812E-889B6AA2536E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7ADA144A-A176-437B-812E-889B6AA2536E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7ADA144A-A176-437B-812E-889B6AA2536E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7ADA144A-A176-437B-812E-889B6AA2536E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE0E384E-A89C-4CC1-AE7C-E390AC8349F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE0E384E-A89C-4CC1-AE7C-E390AC8349F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE0E384E-A89C-4CC1-AE7C-E390AC8349F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE0E384E-A89C-4CC1-AE7C-E390AC8349F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{555192B1-C597-4279-BF19-00CA30C6DF8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{555192B1-C597-4279-BF19-00CA30C6DF8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{555192B1-C597-4279-BF19-00CA30C6DF8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,8 +59,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7ADA144A-A176-437B-812E-889B6AA2536E} = {AD9DF6C4-BA79-4B4E-985C-EE1021B3DCCF}
-		{BE0E384E-A89C-4CC1-AE7C-E390AC8349F3} = {AD9DF6C4-BA79-4B4E-985C-EE1021B3DCCF}
 		{1DFCD593-8814-4DCE-82D8-7F7DC9BE5BD4} = {8AFF4258-7591-43E2-B7AC-CF442F44DEF0}
 		{3231D52B-1EE7-4CD5-B72D-96E8DC267E68} = {8AFF4258-7591-43E2-B7AC-CF442F44DEF0}
 	EndGlobalSection

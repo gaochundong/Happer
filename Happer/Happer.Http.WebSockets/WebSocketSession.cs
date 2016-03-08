@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Buffer;
-using Happer.Logging;
+using Logrila.Logging;
 
 namespace Happer.Http.WebSockets
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Happer.Hosting.Self;
-using Happer.Logging.NLogIntegration;
+using Logrila.Logging.NLogIntegration;
 
 namespace Happer.TestHttpServer
 {

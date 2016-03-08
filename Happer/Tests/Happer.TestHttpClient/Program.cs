@@ -1,5 +1,5 @@
 ﻿using System;
-using Happer.Logging.NLogIntegration;
+using Logrila.Logging.NLogIntegration;
 
 namespace Happer.TestHttpClient
 {
