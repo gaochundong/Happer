@@ -10,7 +10,7 @@ namespace Happer.Http.Routing.Trie
     {
         private readonly TrieNodeFactory nodeFactory;
         private readonly IDictionary<string, TrieNode> routeTries = new Dictionary<string, TrieNode>();
-        private static char[] splitSeparators = new[] {'/'};
+        private static char[] splitSeparators = new[] { '/' };
 
         public RouteResolverTrie(TrieNodeFactory nodeFactory)
         {
@@ -57,8 +57,9 @@ namespace Happer.Http.Routing.Trie
                 return MatchResult.NoMatches;
             }
 
-            return this.routeTries[method].GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
-                                          .ToArray();
+            return this.routeTries[method]
+                .GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
+                .ToArray();
         }
 
         public IEnumerable<string> GetOptions(string path, Context context)
@@ -80,8 +81,10 @@ namespace Happer.Http.Routing.Trie
             {
                 var method = kvp.Key;
                 sb.Append(
-                    kvp.Value.GetRoutes().Select(s => method + " " + s)
-                             .Aggregate((r1, r2) => r1 + "\n" + r2));
+                    kvp.Value
+                    .GetRoutes()
+                    .Select(s => method + " " + s)
+                    .Aggregate((r1, r2) => r1 + "\n" + r2));
             }
 
             return sb.ToString();
