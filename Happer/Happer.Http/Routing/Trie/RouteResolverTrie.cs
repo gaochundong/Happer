@@ -8,13 +8,13 @@ namespace Happer.Http.Routing.Trie
 {
     public class RouteResolverTrie
     {
-        private readonly TrieNodeFactory nodeFactory;
-        private readonly IDictionary<string, TrieNode> routeTries = new Dictionary<string, TrieNode>();
-        private static char[] splitSeparators = new[] { '/' };
+        private readonly TrieNodeFactory _nodeFactory;
+        private readonly IDictionary<string, TrieNode> _routeTries = new Dictionary<string, TrieNode>();
+        private static char[] _splitSeparators = new[] { '/' };
 
         public RouteResolverTrie(TrieNodeFactory nodeFactory)
         {
-            this.nodeFactory = nodeFactory;
+            this._nodeFactory = nodeFactory;
         }
 
         public void BuildTrie(RouteCache cache)
@@ -30,11 +30,11 @@ namespace Happer.Http.Routing.Trie
                     var routeDescription = routeDefinition.Item2;
 
                     TrieNode trieNode;
-                    if (!this.routeTries.TryGetValue(routeDescription.Method, out trieNode))
+                    if (!this._routeTries.TryGetValue(routeDescription.Method, out trieNode))
                     {
-                        trieNode = this.nodeFactory.GetNodeForSegment(null, null);
+                        trieNode = this._nodeFactory.GetNodeForSegment(null, null);
 
-                        this.routeTries.Add(routeDefinition.Item2.Method, trieNode);
+                        this._routeTries.Add(routeDefinition.Item2.Method, trieNode);
                     }
 
                     var segments = routeDefinition.Item2.Segments.ToArray();
@@ -51,20 +51,19 @@ namespace Happer.Http.Routing.Trie
                 return MatchResult.NoMatches;
             }
 
-            // TODO -concurrent if allowing updates?
-            if (!this.routeTries.ContainsKey(method))
+            if (!this._routeTries.ContainsKey(method))
             {
                 return MatchResult.NoMatches;
             }
 
-            return this.routeTries[method]
-                .GetMatches(path.Split(splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
+            return this._routeTries[method]
+                .GetMatches(path.Split(_splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
                 .ToArray();
         }
 
         public IEnumerable<string> GetOptions(string path, Context context)
         {
-            foreach (var method in this.routeTries.Keys)
+            foreach (var method in this._routeTries.Keys)
             {
                 if (this.GetMatches(method, path, context).Any())
                 {
@@ -77,7 +76,7 @@ namespace Happer.Http.Routing.Trie
         {
             var sb = new StringBuilder();
 
-            foreach (var kvp in this.routeTries)
+            foreach (var kvp in this._routeTries)
             {
                 var method = kvp.Key;
                 sb.Append(
