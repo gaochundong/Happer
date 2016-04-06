@@ -171,14 +171,14 @@ namespace Happer.Http.Routing.Trie.Nodes
         protected virtual NodeData BuildNodeData(int nodeCount, int score, Type moduleType, int routeIndex, RouteDescription routeDescription)
         {
             return new NodeData
-                       {
-                           Method = routeDescription.Method,
-                           RouteIndex = routeIndex,
-                           RouteLength = nodeCount,
-                           Score = score,
-                           Condition = routeDescription.Condition,
-                           ModuleType = moduleType,
-                       };
+                {
+                    Method = routeDescription.Method,
+                    RouteIndex = routeIndex,
+                    RouteLength = nodeCount,
+                    Score = score,
+                    Condition = routeDescription.Condition,
+                    ModuleType = moduleType,
+                };
         }
 
         /// <summary>
