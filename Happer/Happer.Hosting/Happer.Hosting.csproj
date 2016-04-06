@@ -74,6 +74,10 @@
       <Project>{7eb615ae-71b7-4d75-8e43-1cef143e0b33}</Project>
       <Name>Happer.Http</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Happer.Rpc\Happer.Rpc.csproj">
+      <Project>{e556f732-a488-4bf2-ab14-c0bfe4fd1db3}</Project>
+      <Name>Happer.Rpc</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
