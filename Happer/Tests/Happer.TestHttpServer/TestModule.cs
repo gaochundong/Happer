@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Happer.Http;
 
 namespace Happer.TestHttpServer
@@ -17,6 +18,10 @@ namespace Happer.TestHttpServer
             Get["/text"] = x =>
             {
                 return "text";
+            };
+            Get["/test"] = x =>
+            {
+                return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
             };
 
             Post["/post"] = x =>

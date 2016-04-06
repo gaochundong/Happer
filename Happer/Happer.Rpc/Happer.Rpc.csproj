@@ -50,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RpcModule.cs" />
     <Compile Include="RpcService.cs" />
+    <Compile Include="RpcServiceResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happer.Http\Happer.Http.csproj">
