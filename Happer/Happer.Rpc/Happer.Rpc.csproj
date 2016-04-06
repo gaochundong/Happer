@@ -48,6 +48,7 @@
     <Compile Include="IRpcService.cs" />
     <Compile Include="IRpcServiceResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RpcMethodAttribute.cs" />
     <Compile Include="RpcModule.cs" />
     <Compile Include="RpcService.cs" />
     <Compile Include="RpcServiceResolver.cs" />
