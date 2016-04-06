@@ -57,9 +57,9 @@ namespace Happer.Rpc
             Post["/" + typeof(TRequest).Name, true] = async (ctx, ct) =>
             {
                 var rpcService = rpcServiceResolver.GetRpcService<TRequest, TResponse>();
-                var request = Bind<TRequest>();
-                var response = await rpcService.Execute(request, ct);
-                return JsonConvert.SerializeObject(response);
+                var rpcRequest = Bind<TRequest>();
+                var rpcResponse = await rpcService.Execute(rpcRequest, ct);
+                return this.Response.AsJson(rpcResponse);
             };
         }
 

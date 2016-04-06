@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.WebSockets;
@@ -135,9 +136,32 @@ namespace Happer
 
             httpResponse.StatusCode = (int)response.StatusCode;
 
+            OutputWithContentLength(response, httpResponse);
+        }
+
+        private static void OutputWithContentLength(Response response, HttpListenerResponse httpResponse)
+        {
+            byte[] buffer;
+            using (var memoryStream = new MemoryStream())
+            {
+                response.Contents.Invoke(memoryStream);
+                buffer = memoryStream.ToArray();
+            }
+
+            var contentLength = (response.Headers.ContainsKey("Content-Length")) ?
+                Convert.ToInt64(response.Headers["Content-Length"]) :
+                buffer.Length;
+
+            httpResponse.SendChunked = false;
+            httpResponse.ContentLength64 = contentLength;
+
             using (var output = httpResponse.OutputStream)
             {
-                response.Contents.Invoke(output);
+                using (var writer = new BinaryWriter(output))
+                {
+                    writer.Write(buffer);
+                    writer.Flush();
+                }
             }
         }
 
