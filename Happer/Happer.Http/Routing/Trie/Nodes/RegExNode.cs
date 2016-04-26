@@ -4,6 +4,7 @@ namespace Happer.Http.Routing.Trie.Nodes
 
     /// <summary>
     /// A regular expression capture node e.g. (?&lt;foo>\d{2,4})
+    /// RegEx Segment - (1,000) - /(?<age>[\d]{1,2}) using Named Capture Grouped Regular Expressions, you can get a little more control out of the segment pattern. If you don't need to capture anything then you can use a non-capturing group like (?:regex-goes-here)
     /// </summary>
     public class RegExNode : TrieNode
     {

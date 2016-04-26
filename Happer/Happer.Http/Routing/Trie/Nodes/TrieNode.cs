@@ -38,7 +38,8 @@ namespace Happer.Http.Routing.Trie.Nodes
         public IDictionary<string, object> AdditionalParameters { get; protected set; }
 
         /// <summary>
-        /// Score for this node
+        /// Score for this node.
+        /// If both routes contain the same number of segments then the route with the highest score wins and that route is picked.
         /// </summary>
         public abstract int Score { get; }
 

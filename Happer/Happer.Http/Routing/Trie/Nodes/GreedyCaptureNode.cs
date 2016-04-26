@@ -10,6 +10,7 @@
     /// e.g. /foo/bar/{greedy*} - this node will be hit for /foo/bar/[anything that doesn't match another route], but
     /// not for just /foo/bar
     /// e.g. /foo/{greedy*}/bar - this node will be hit for /foo/[anything that doesn't match another route]/bar
+    /// Greedy Segment - (0) - /{name*} by adding a star/asterisk to the end of the segment name, the pattern will match any value from the current forward slash onward.
     /// </summary>
     public class GreedyCaptureNode : TrieNode
     {

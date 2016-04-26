@@ -2,6 +2,7 @@ namespace Happer.Http.Routing.Trie.Nodes
 {
     /// <summary>
     /// A node for standard captures e.g. {foo}
+    /// Capture segments - (1,000) - /{name} which captures whatever is passed into the given segment of the requested URL and then passes it into the Action of the route.
     /// </summary>
     public class CaptureNode : TrieNode
     {

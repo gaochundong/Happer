@@ -4,6 +4,7 @@ namespace Happer.Http.Routing.Trie.Nodes
 
     /// <summary>
     /// An optional capture node e.g. {foo?}
+    /// Capture segments *(optional)* - (1,000) - /{name?} by adding the question mark at the end of the segment name the segment can be made optional.
     /// </summary>
     public class OptionalCaptureNode : TrieNode
     {

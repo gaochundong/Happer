@@ -11,6 +11,7 @@
     /// e.g. @"^(?:(?&lt;id>videos/\d{1,10})(?:/{0,1}(?&lt;slug>.*)))$"
     /// This will match for a Url like /videos/123/some-random-slug
     /// and capture 'videos/123' and 'some-random-slug'
+    /// Greedy RegEx Segment - (100) - ^(?<name>[a-z]{3,10}(?:/{1})(?<action>[a-z]{5,10}))$ a segment composed of a RegEx and Greedy segment, this captures the entire path after the forward slash, The segment must start with ^ and end with $ so we know the start/finish of the greedy regular expression segment.
     /// </summary>
     public class GreedyRegExCaptureNode : TrieNode
     {

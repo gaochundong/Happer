@@ -14,7 +14,7 @@ namespace Happer.Http
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private static readonly Regex ModuleNameExpression = new Regex(@"(?<name>[\w]+)Module$", RegexOptions.Compiled);
 
-        private readonly List<Route> routes = new List<Route>();
+        private readonly List<Route> _routes = new List<Route>();
 
         protected Module()
             : this(string.Empty)
@@ -29,7 +29,7 @@ namespace Happer.Http
         [EditorBrowsable(EditorBrowsableState.Never)]
         public IEnumerable<Route> Routes
         {
-            get { return this.routes.AsReadOnly(); }
+            get { return _routes.AsReadOnly(); }
         }
 
         public string ModulePath { get; protected set; }
@@ -94,13 +94,13 @@ namespace Happer.Http
 
         public class RouteBuilder
         {
-            private readonly string method;
-            private readonly Module parentModule;
+            private readonly string _method;
+            private readonly Module _parentModule;
 
             public RouteBuilder(string method, Module parentModule)
             {
-                this.method = method;
-                this.parentModule = parentModule;
+                _method = method;
+                _parentModule = parentModule;
             }
 
             public Func<dynamic, dynamic> this[string path]
@@ -147,20 +147,20 @@ namespace Happer.Http
             {
                 var fullPath = GetFullPath(path);
 
-                this.parentModule.routes.Add(Route.FromSync(name, this.method, fullPath, condition, value));
+                _parentModule._routes.Add(Route.FromSync(name, _method, fullPath, condition, value));
             }
 
             protected void AddRoute(string name, string path, Func<Context, bool> condition, Func<dynamic, CancellationToken, Task<dynamic>> value)
             {
                 var fullPath = GetFullPath(path);
 
-                this.parentModule.routes.Add(new Route(name, this.method, fullPath, condition, value));
+                _parentModule._routes.Add(new Route(name, _method, fullPath, condition, value));
             }
 
             private string GetFullPath(string path)
             {
                 var relativePath = (path ?? string.Empty).Trim('/');
-                var parentPath = (this.parentModule.ModulePath ?? string.Empty).Trim('/');
+                var parentPath = (_parentModule.ModulePath ?? string.Empty).Trim('/');
 
                 if (string.IsNullOrEmpty(parentPath))
                 {

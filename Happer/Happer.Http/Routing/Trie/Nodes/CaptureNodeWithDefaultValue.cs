@@ -4,6 +4,7 @@ namespace Happer.Http.Routing.Trie.Nodes
 
     /// <summary>
     /// A capture node with a default value e.g. {foo?default}
+    /// Capture Segments *(optional/default)* - (1,000) - /{name?unnamed}/ by adding a value after the question mark we can turn an optional segment into a segment with a default value, should the pattern be the most suited but the segment missing, the value returned will be what comes after the question mark.
     /// </summary>
     public class CaptureNodeWithDefaultValue : CaptureNode
     {

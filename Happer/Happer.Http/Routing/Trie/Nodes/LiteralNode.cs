@@ -4,6 +4,7 @@ namespace Happer.Http.Routing.Trie.Nodes
 
     /// <summary>
     /// Literal string node e.g. goo
+    /// Literal segments - (10,000) - /some/literal/segments which require an exact match.
     /// </summary>
     public class LiteralNode : TrieNode
     {
