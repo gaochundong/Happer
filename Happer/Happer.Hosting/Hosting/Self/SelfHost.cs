@@ -59,11 +59,7 @@ namespace Happer.Hosting.Self
             while (_keepProcessing)
             {
                 var context = await _listener.GetContextAsync();
-                Task.Run(async () =>
-                {
-                    await Process(context);
-                })
-                .Forget();
+                await Process(context);
             }
         }
 
