@@ -9,7 +9,7 @@ namespace Happer.Http.Routing.Trie
     public class RouteResolverTrie
     {
         private readonly TrieNodeFactory _nodeFactory;
-        private readonly IDictionary<string, TrieNode> _routeTries = new Dictionary<string, TrieNode>();
+        private readonly IDictionary<string, TrieNode> _routeTries = new Dictionary<string, TrieNode>(StringComparer.OrdinalIgnoreCase);
         private static char[] _splitSeparators = new[] { '/' };
 
         public RouteResolverTrie(TrieNodeFactory nodeFactory)
@@ -46,19 +46,15 @@ namespace Happer.Http.Routing.Trie
 
         public MatchResult[] GetMatches(string method, string path, Context context)
         {
-            if (string.IsNullOrEmpty(path))
+            TrieNode result;
+
+            if (!this._routeTries.TryGetValue(method, out result))
             {
                 return MatchResult.NoMatches;
             }
 
-            if (!this._routeTries.ContainsKey(method))
-            {
-                return MatchResult.NoMatches;
-            }
-
-            return this._routeTries[method]
-                .GetMatches(path.Split(_splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
-                .ToArray();
+            return result.GetMatches(path.Split(_splitSeparators, StringSplitOptions.RemoveEmptyEntries), context)
+                         .ToArray();
         }
 
         public IEnumerable<string> GetOptions(string path, Context context)

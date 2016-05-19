@@ -54,7 +54,7 @@ namespace Happer
             }
             else
             {
-                context.Response = await _requestDispatcher.Dispatch(context, cancellationToken);
+                context.Response = await _requestDispatcher.Dispatch(context, cancellationToken).ConfigureAwait(false);
             }
 
             ConvertResponse(context.Response, httpContext.Response);

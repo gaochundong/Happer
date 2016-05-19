@@ -38,6 +38,8 @@ namespace Happer.Hosting.Self
             StartListener();
 
             _keepProcessing = true;
+
+            // Launch a thread that will listen for requests and then process them.
             Task.Run(async () =>
             {
                 await StartProcess();
@@ -69,20 +71,23 @@ namespace Happer.Hosting.Self
             {
                 var cancellationToken = new CancellationToken();
 
+                // Each request is processed in its own execution thread.
                 if (httpContext.Request.IsWebSocketRequest)
                 {
                     var webSocketContext = await httpContext.AcceptWebSocketAsync(_webSocketSubProtocol);
                     var baseUri = GetBaseUri(webSocketContext.RequestUri);
                     if (baseUri == null)
-                        throw new InvalidOperationException(string.Format("Unable to locate base URI for request: {0}", webSocketContext.RequestUri));
-                    await _engine.HandleWebSocket(httpContext, webSocketContext, cancellationToken);
+                        throw new InvalidOperationException(string.Format(
+                            "Unable to locate base URI for request: {0}", webSocketContext.RequestUri));
+                    await _engine.HandleWebSocket(httpContext, webSocketContext, cancellationToken).ConfigureAwait(false);
                 }
                 else
                 {
                     var baseUri = GetBaseUri(httpContext.Request.Url);
                     if (baseUri == null)
-                        throw new InvalidOperationException(string.Format("Unable to locate base URI for request: {0}", httpContext.Request.Url));
-                    await _engine.HandleHttp(httpContext, baseUri, cancellationToken);
+                        throw new InvalidOperationException(string.Format(
+                            "Unable to locate base URI for request: {0}", httpContext.Request.Url));
+                    await _engine.HandleHttp(httpContext, baseUri, cancellationToken).ConfigureAwait(false);
                 }
             }
             catch
