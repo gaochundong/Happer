@@ -9,13 +9,13 @@ namespace Happer.Http
 {
     public class RequestDispatcher
     {
-        private readonly RouteResolver routeResolver;
-        private readonly RouteInvoker routeInvoker;
+        private readonly RouteResolver _routeResolver;
+        private readonly RouteInvoker _routeInvoker;
 
         public RequestDispatcher(RouteResolver routeResolver, RouteInvoker routeInvoker)
         {
-            this.routeResolver = routeResolver;
-            this.routeInvoker = routeInvoker;
+            _routeResolver = routeResolver;
+            _routeInvoker = routeInvoker;
         }
 
         public async Task<Response> Dispatch(Context context, CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ namespace Happer.Http
             context.Parameters = resolveResult.Parameters;
             context.ResolvedRoute = resolveResult.Route;
 
-            return await this.routeInvoker.Invoke(resolveResult.Route, cancellationToken, resolveResult.Parameters, context);
+            return await _routeInvoker.Invoke(resolveResult.Route, cancellationToken, resolveResult.Parameters, context);
         }
 
         private ResolveResult Resolve(Context context)
@@ -41,7 +41,7 @@ namespace Happer.Http
             context.Request.Headers.Accept = acceptHeaders.ToList();
             context.Request.Url.Path = path;
 
-            return this.routeResolver.Resolve(context);
+            return _routeResolver.Resolve(context);
         }
     }
 }

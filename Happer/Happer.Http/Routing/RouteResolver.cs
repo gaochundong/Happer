@@ -8,9 +8,9 @@ namespace Happer.Http.Routing
 {
     public class RouteResolver
     {
-        private readonly ModuleCatalog catalog;
-        private readonly ModuleBuilder moduleBuilder;
-        private readonly RouteResolverTrie routeTrie;
+        private readonly ModuleCatalog _catalog;
+        private readonly ModuleBuilder _moduleBuilder;
+        private readonly RouteResolverTrie _routeTrie;
 
         public RouteResolver(
             ModuleCatalog catalog,
@@ -24,20 +24,20 @@ namespace Happer.Http.Routing
             if (routeTrie == null)
                 throw new ArgumentNullException("routeTrie");
 
-            this.catalog = catalog;
-            this.moduleBuilder = moduleBuilder;
-            this.routeTrie = routeTrie;
+            _catalog = catalog;
+            _moduleBuilder = moduleBuilder;
+            _routeTrie = routeTrie;
         }
 
         public ResolveResult Resolve(Context context)
         {
             var pathDecoded = HttpUtility.UrlDecode(context.Request.Path);
 
-            var results = this.routeTrie.GetMatches(GetMethod(context), pathDecoded, context);
+            var results = _routeTrie.GetMatches(GetMethod(context), pathDecoded, context);
 
             if (!results.Any())
             {
-                var allowedMethods = this.routeTrie.GetOptions(pathDecoded, context).ToArray();
+                var allowedMethods = _routeTrie.GetOptions(pathDecoded, context).ToArray();
 
                 if (IsOptionsRequest(context))
                 {
@@ -57,7 +57,7 @@ namespace Happer.Http.Routing
                 var matchResult = results[index];
                 if (matchResult.Condition == null || matchResult.Condition.Invoke(context))
                 {
-                    return this.BuildResult(context, matchResult);
+                    return BuildResult(context, matchResult);
                 }
             }
 
@@ -107,8 +107,8 @@ namespace Happer.Http.Routing
 
         private Module GetModuleFromMatchResult(Context context, MatchResult result)
         {
-            var module = this.catalog.GetModule(result.ModuleType);
-            return this.moduleBuilder.BuildModule(module, context);
+            var module = _catalog.GetModule(result.ModuleType);
+            return _moduleBuilder.BuildModule(module, context);
         }
 
         private static ResolveResult GetNotFoundResult(Context context)
