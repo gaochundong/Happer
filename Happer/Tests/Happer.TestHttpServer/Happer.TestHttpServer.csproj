@@ -54,13 +54,14 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\HelloRequest.cs" />
-    <Compile Include="Rpc\HelloResponse.cs" />
-    <Compile Include="Rpc\HelloRpcService.cs" />
-    <Compile Include="TestModel.cs" />
-    <Compile Include="TestModule.cs" />
-    <Compile Include="Rpc\TestRpcModule.cs" />
-    <Compile Include="TestWebSocketModule.cs" />
+    <Compile Include="Modules\Rpc\HelloRequest.cs" />
+    <Compile Include="Modules\Rpc\HelloResponse.cs" />
+    <Compile Include="Modules\Rpc\HelloRpcService.cs" />
+    <Compile Include="Container\TestContainer.cs" />
+    <Compile Include="Model\TestModel.cs" />
+    <Compile Include="Modules\TestModule.cs" />
+    <Compile Include="Modules\Rpc\TestRpcModule.cs" />
+    <Compile Include="Modules\TestWebSocketModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Happer.Http.WebSockets\Happer.Http.WebSockets.csproj">

@@ -5,21 +5,23 @@ namespace Happer.Http.WebSockets
 {
     public class WebSocketModuleCatalog
     {
-        private Dictionary<string, WebSocketModule> _modules = new Dictionary<string, WebSocketModule>();
+        private Func<IEnumerable<WebSocketModule>> _getAllModules;
+        private Func<Type, WebSocketModule> _getModule;
+
+        public WebSocketModuleCatalog(Func<IEnumerable<WebSocketModule>> getAllModules, Func<Type, WebSocketModule> getModule)
+        {
+            _getAllModules = getAllModules;
+            _getModule = getModule;
+        }
 
         public IEnumerable<WebSocketModule> GetAllModules()
         {
-            return _modules.Values;
+            return _getAllModules();
         }
 
         public WebSocketModule GetModule(Type moduleType)
         {
-            return _modules[moduleType.FullName];
-        }
-
-        public void RegisterModule(WebSocketModule module)
-        {
-            _modules.Add(module.GetType().FullName, module);
+            return _getModule(moduleType);
         }
     }
 }

@@ -12,20 +12,24 @@ namespace Happer.TestHttpServer
         {
             NLogLogger.Use();
 
-            Func<Type, object> container = (t) =>
+            // POST : http://localhost:3202/rpc/hello
+            // POST DATA : {"Name":"Dennis" }
+            // RETURN RESULT : {"Result":"Hello, Dennis"}
+            Func<Type, object> rpcContainer = (t) =>
             {
                 return new HelloRpcService();
             };
-            var rpcServiceResolver = new RpcServiceResolver(container);
+            var rpcServiceResolver = new RpcServiceResolver(rpcContainer);
             var rpc = new TestRpcModule(rpcServiceResolver);
             rpc.RegisterRpcService(rpcServiceResolver.GetRpcService<HelloRequest, HelloResponse>());
 
-            var bootstrapper = new Bootstrapper();
-            bootstrapper.Modules.Add(new TestModule());
-            bootstrapper.Modules.Add(rpc);
-            bootstrapper.WebSocketModules.Add(new TestWebSocketModule());
+            var container = new TestContainer();
+            container.AddModule(new TestModule());
+            container.AddModule(rpc);
+            container.AddWebSocketModule(new TestWebSocketModule());
 
-            var engine = bootstrapper.Boot();
+            var bootstrapper = new Bootstrapper();
+            var engine = bootstrapper.BootWith(container);
 
             string uri = "http://localhost:3202/";
             var host = new SelfHost(engine, new Uri(uri));

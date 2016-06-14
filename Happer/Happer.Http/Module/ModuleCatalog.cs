@@ -5,21 +5,23 @@ namespace Happer.Http
 {
     public class ModuleCatalog
     {
-        private Dictionary<string, Module> _modules = new Dictionary<string, Module>();
+        private Func<IEnumerable<Module>> _getAllModules;
+        private Func<Type, Module> _getModule;
+
+        public ModuleCatalog(Func<IEnumerable<Module>> getAllModules, Func<Type, Module> getModule)
+        {
+            _getAllModules = getAllModules;
+            _getModule = getModule;
+        }
 
         public IEnumerable<Module> GetAllModules()
         {
-            return _modules.Values;
+            return _getAllModules();
         }
 
         public Module GetModule(Type moduleType)
         {
-            return _modules[moduleType.FullName];
-        }
-
-        public void RegisterModule(Module module)
-        {
-            _modules.Add(module.GetType().FullName, module);
+            return _getModule(moduleType);
         }
     }
 }

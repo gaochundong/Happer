@@ -16,18 +16,16 @@ namespace Happer
     {
         public Bootstrapper()
         {
-            this.Modules = new List<Module>();
-            this.WebSocketModules = new List<WebSocketModule>();
         }
 
-        public List<Module> Modules { get; private set; }
-        public List<WebSocketModule> WebSocketModules { get; private set; }
-
-        public Engine Boot()
+        public Engine BootWith(IModuleContainer container)
         {
+            if (container == null)
+                throw new ArgumentNullException("container");
+
             var staticContentProvider = BuildStaticContentProvider();
-            var requestDispatcher = BuildRequestDispatcher();
-            var webSocketDispatcher = BuildWebSocketDispatcher();
+            var requestDispatcher = BuildRequestDispatcher(container);
+            var webSocketDispatcher = BuildWebSocketDispatcher(container);
 
             return new Engine(staticContentProvider, requestDispatcher, webSocketDispatcher);
         }
@@ -46,13 +44,12 @@ namespace Happer
             return staticContentProvider;
         }
 
-        private RequestDispatcher BuildRequestDispatcher()
+        private RequestDispatcher BuildRequestDispatcher(IModuleContainer container)
         {
-            var moduleCatalog = new ModuleCatalog();
-            foreach (var module in Modules)
-            {
-                moduleCatalog.RegisterModule(module);
-            }
+            var moduleCatalog = new ModuleCatalog(
+                    () => { return container.GetAllModules(); },
+                    (Type moduleType) => { return container.GetModule(moduleType); }
+                );
 
             var routeSegmentExtractor = new RouteSegmentExtractor();
             var routeDescriptionProvider = new RouteDescriptionProvider();
@@ -76,13 +73,12 @@ namespace Happer
             return requestDispatcher;
         }
 
-        private WebSocketDispatcher BuildWebSocketDispatcher()
+        private WebSocketDispatcher BuildWebSocketDispatcher(IModuleContainer container)
         {
-            var moduleCatalog = new WebSocketModuleCatalog();
-            foreach (var module in WebSocketModules)
-            {
-                moduleCatalog.RegisterModule(module);
-            }
+            var moduleCatalog = new WebSocketModuleCatalog(
+                    () => { return container.GetAllWebSocketModules(); },
+                    (Type moduleType) => { return container.GetWebSocketModule(moduleType); }
+                );
 
             var routeResolver = new WebSocketRouteResolver(moduleCatalog);
             var bufferManager = new GrowingByteBufferManager(100, 64);
