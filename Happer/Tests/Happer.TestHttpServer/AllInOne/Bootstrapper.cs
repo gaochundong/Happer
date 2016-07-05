@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Happer.Buffer;
 using Happer.Http;
 using Happer.Http.Responses;
 using Happer.Http.Routing;
 using Happer.Http.Routing.Trie;
 using Happer.Http.Serialization;
+using Happer.Http.WebSockets;
 using Happer.Serialization;
 using Happer.StaticContent;
 
-namespace Happer
+namespace Happer.TestHttpServer
 {
     public class Bootstrapper
     {
@@ -23,8 +25,9 @@ namespace Happer
 
             var staticContentProvider = BuildStaticContentProvider();
             var requestDispatcher = BuildRequestDispatcher(container);
+            var webSocketDispatcher = BuildWebSocketDispatcher(container);
 
-            return new Engine(staticContentProvider, requestDispatcher);
+            return new Engine(staticContentProvider, requestDispatcher, webSocketDispatcher);
         }
 
         private StaticContentProvider BuildStaticContentProvider()
@@ -68,6 +71,19 @@ namespace Happer
             var requestDispatcher = new RequestDispatcher(routeResolver, routeInvoker);
 
             return requestDispatcher;
+        }
+
+        private WebSocketDispatcher BuildWebSocketDispatcher(IModuleContainer container)
+        {
+            var moduleCatalog = new WebSocketModuleCatalog(
+                    () => { return container.GetAllWebSocketModules(); },
+                    (Type moduleType) => { return container.GetWebSocketModule(moduleType); }
+                );
+
+            var routeResolver = new WebSocketRouteResolver(moduleCatalog);
+            var bufferManager = new GrowingByteBufferManager(100, 64);
+
+            return new WebSocketDispatcher(routeResolver, bufferManager);
         }
     }
 }

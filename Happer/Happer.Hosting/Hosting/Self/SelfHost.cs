@@ -14,15 +14,15 @@ namespace Happer.Hosting.Self
         private IList<Uri> _baseUriList;
         private HttpListener _listener;
         private bool _keepProcessing = false;
-        private Engine _engine;
+        private IEngine _engine;
         private string _webSocketSubProtocol;
 
-        public SelfHost(Engine engine, params Uri[] baseUris)
+        public SelfHost(IEngine engine, params Uri[] baseUris)
             : this(engine, null, baseUris)
         {
         }
 
-        public SelfHost(Engine engine, string webSocketSubProtocol, params Uri[] baseUris)
+        public SelfHost(IEngine engine, string webSocketSubProtocol, params Uri[] baseUris)
         {
             if (engine == null)
                 throw new ArgumentNullException("engine");
@@ -79,12 +79,8 @@ namespace Happer.Hosting.Self
                 // Each request is processed in its own execution thread.
                 if (httpContext.Request.IsWebSocketRequest)
                 {
-                    var webSocketContext = await httpContext.AcceptWebSocketAsync(_webSocketSubProtocol);
-                    var baseUri = GetBaseUri(webSocketContext.RequestUri);
-                    if (baseUri == null)
-                        throw new InvalidOperationException(string.Format(
-                            "Unable to locate base URI for request: {0}", webSocketContext.RequestUri));
-                    await _engine.HandleWebSocket(httpContext, webSocketContext, cancellationToken).ConfigureAwait(false);
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    httpContext.Response.Close();
                 }
                 else
                 {
