@@ -44,7 +44,7 @@ namespace Happer.Hosting.Self
             {
                 await StartProcess();
             })
-            .Forget();
+            .ConfigureAwait(false);
         }
 
         public void Stop()
@@ -63,11 +63,11 @@ namespace Happer.Hosting.Self
                 var context = await _listener.GetContextAsync();
 
                 // Launch a child thread to handle the request.
-                await Task.Run(async () =>
+                Task.Run(async () =>
                 {
-                    await Process(context);
+                    await Process(context).ConfigureAwait(false);
                 })
-                .ConfigureAwait(false);
+                .Forget();
             }
         }
 

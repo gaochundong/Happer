@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Happer.Http;
 
 namespace Happer.TestHttpServer
@@ -78,6 +80,18 @@ namespace Happer.TestHttpServer
             {
                 string html = GetEmbeddedResourceData("websocket.html");
                 return this.Response.AsHtml(html);
+            };
+
+            Get["/delay"] = x =>
+            {
+                Console.WriteLine("[{1}] Delay starts Thread[{0}].",
+                    Thread.CurrentThread.ManagedThreadId,
+                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"));
+                Thread.Sleep(TimeSpan.FromSeconds(3));
+                Console.WriteLine("[{1}] Delay ends Thread[{0}].",
+                    Thread.CurrentThread.ManagedThreadId,
+                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"));
+                return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             };
         }
 
