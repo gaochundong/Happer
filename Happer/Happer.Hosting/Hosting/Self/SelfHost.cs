@@ -39,7 +39,7 @@ namespace Happer.Hosting.Self
 
             _keepProcessing = true;
 
-            // Launch a thread that will listen for requests and then process them.
+            // Launch a main thread that will listen for requests and then process them.
             Task.Run(async () =>
             {
                 await StartProcess();
@@ -62,11 +62,12 @@ namespace Happer.Hosting.Self
             {
                 var context = await _listener.GetContextAsync();
 
-                Task.Run(async () =>
+                // Launch a child thread to handle the request.
+                await Task.Run(async () =>
                 {
                     await Process(context);
                 })
-                .Forget();
+                .ConfigureAwait(false);
             }
         }
 
