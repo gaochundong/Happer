@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/gaochundong/Happer/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/gaochundong/Happer</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Happer is a library for building HTTP based services.</description>
+    <description>Happer is a C# library for building HTTP based services.</description>
     <copyright>Copyright © 2015-2016 Dennis Gao.</copyright>
     <dependencies>
       <dependency id="Logrila.Logging" version="1.0.1" />

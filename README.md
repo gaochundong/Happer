@@ -1,2 +1,2 @@
 # Happer
-Happer is a library for building HTTP/WebSocket based services.
+Happer is a C# library for building HTTP based services.
