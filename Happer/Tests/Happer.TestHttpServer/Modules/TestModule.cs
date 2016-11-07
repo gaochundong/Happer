@@ -20,7 +20,7 @@ namespace Happer.TestHttpServer
             {
                 return "text";
             };
-            Get["/test"] = x =>
+            Get["/time"] = x =>
             {
                 return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff");
             };
