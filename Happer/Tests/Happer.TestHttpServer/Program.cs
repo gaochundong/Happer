@@ -11,7 +11,7 @@ namespace Happer.TestHttpServer
         {
             NLogLogger.Use();
 
-            var container = new TestContainer();
+            var container = new ModuleContainer();
             container.AddModule(new TestModule());
 
             var bootstrapper = new Bootstrapper();

@@ -45,12 +45,14 @@
     <Compile Include="..\SolutionVersion.cs">
       <Link>SolutionVersion.cs</Link>
     </Compile>
-    <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Engine.cs" />
+    <Compile Include="Default\Bootstrapper.cs" />
+    <Compile Include="Default\Engine.cs" />
+    <Compile Include="Default\ModuleContainer.cs" />
     <Compile Include="Hosting\Self\NetSh.cs" />
     <Compile Include="Hosting\Self\SelfHost.cs" />
     <Compile Include="Hosting\Self\UacHelper.cs" />
     <Compile Include="Hosting\Self\UrlReservations.cs" />
+    <Compile Include="IBootstrapper.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="IgnoredHeaders.cs" />
     <Compile Include="IModuleContainer.cs" />

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using Happer.Http;
 
-namespace Happer.TestHttpServer
+namespace Happer
 {
-    public class TestContainer : IModuleContainer
+    public class ModuleContainer : IModuleContainer
     {
         private Dictionary<string, Module> _modules = new Dictionary<string, Module>();
 
-        public TestContainer()
+        public ModuleContainer()
         {
         }
 

@@ -10,13 +10,13 @@ using Happer.StaticContent;
 
 namespace Happer
 {
-    public class Bootstrapper
+    public class Bootstrapper : IBootstrapper
     {
         public Bootstrapper()
         {
         }
 
-        public Engine BootWith(IModuleContainer container)
+        public IEngine BootWith(IModuleContainer container)
         {
             if (container == null)
                 throw new ArgumentNullException("container");

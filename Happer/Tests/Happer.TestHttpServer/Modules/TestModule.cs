@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Happer.Http;
 
 namespace Happer.TestHttpServer
@@ -70,17 +69,6 @@ namespace Happer.TestHttpServer
                 return this.Response.AsHtml(html);
             };
 
-            Get["/websocket"] = x =>
-            {
-                string html = GetEmbeddedResourceData("websocket.html");
-                return this.Response.AsHtml(html);
-            };
-
-            Get["/websocket.html"] = x =>
-            {
-                string html = GetEmbeddedResourceData("websocket.html");
-                return this.Response.AsHtml(html);
-            };
 
             Get["/delay"] = x =>
             {
