@@ -58,10 +58,6 @@
     <Compile Include="Modules\TestModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Happer.Buffer\Happer.Buffer.csproj">
-      <Project>{555192b1-c597-4279-bf19-00ca30c6df8d}</Project>
-      <Name>Happer.Buffer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Happer.Http\Happer.Http.csproj">
       <Project>{7eb615ae-71b7-4d75-8e43-1cef143e0b33}</Project>
       <Name>Happer.Http</Name>
