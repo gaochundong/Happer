@@ -5,12 +5,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
 using Happer.Http.Utilities;
-using Happer.Http.WebSockets;
 using Happer.StaticContent;
 
 namespace Happer.TestHttpServer
@@ -19,20 +17,16 @@ namespace Happer.TestHttpServer
     {
         private StaticContentProvider _staticContentProvider;
         private RequestDispatcher _requestDispatcher;
-        private WebSocketDispatcher _webSocketDispatcher;
 
-        public Engine(StaticContentProvider staticContentProvider, RequestDispatcher requestDispatcher, WebSocketDispatcher webSocketDispatcher)
+        public Engine(StaticContentProvider staticContentProvider, RequestDispatcher requestDispatcher)
         {
             if (staticContentProvider == null)
                 throw new ArgumentNullException("staticContentProvider");
             if (requestDispatcher == null)
                 throw new ArgumentNullException("requestDispatcher");
-            if (webSocketDispatcher == null)
-                throw new ArgumentNullException("webSocketDispatcher");
 
             _staticContentProvider = staticContentProvider;
             _requestDispatcher = requestDispatcher;
-            _webSocketDispatcher = webSocketDispatcher;
         }
 
         public async Task HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken)
@@ -58,16 +52,6 @@ namespace Happer.TestHttpServer
             }
 
             ConvertResponse(context.Response, httpContext.Response);
-        }
-
-        public async Task HandleWebSocket(HttpListenerContext httpContext, HttpListenerWebSocketContext webSocketContext, CancellationToken cancellationToken)
-        {
-            if (httpContext == null)
-                throw new ArgumentNullException("httpContext");
-            if (webSocketContext == null)
-                throw new ArgumentNullException("webSocketContext");
-
-            await _webSocketDispatcher.Dispatch(httpContext, webSocketContext, cancellationToken);
         }
 
         private Request ConvertRequest(Uri baseUri, HttpListenerRequest httpRequest)

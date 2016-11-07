@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Happer.Hosting.Self;
-using Happer.Rpc;
 using Logrila.Logging.NLogIntegration;
 
 namespace Happer.TestHttpServer
@@ -12,21 +11,8 @@ namespace Happer.TestHttpServer
         {
             NLogLogger.Use();
 
-            // POST : http://localhost:3202/rpc/hello
-            // POST DATA : {"Name":"Dennis" }
-            // RETURN RESULT : {"Result":"Hello, Dennis"}
-            Func<Type, object> rpcContainer = (t) =>
-            {
-                return new HelloRpcService();
-            };
-            var rpcServiceResolver = new RpcServiceResolver(rpcContainer);
-            var rpc = new TestRpcModule(rpcServiceResolver);
-            rpc.RegisterRpcService(rpcServiceResolver.GetRpcService<HelloRequest, HelloResponse>());
-
             var container = new TestContainer();
             container.AddModule(new TestModule());
-            container.AddModule(rpc);
-            container.AddWebSocketModule(new TestWebSocketModule());
 
             var bootstrapper = new Bootstrapper();
             var engine = bootstrapper.BootWith(container);

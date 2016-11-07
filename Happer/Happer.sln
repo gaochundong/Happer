@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Buffer", "Happer.Buffer\Happer.Buffer.csproj", "{555192B1-C597-4279-BF19-00CA30C6DF8D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Http", "Happer.Http\Happer.Http.csproj", "{7EB615AE-71B7-4D75-8E43-1CEF143E0B33}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Http.WebSockets", "Happer.Http.WebSockets\Happer.Http.WebSockets.csproj", "{47E06681-38E9-46C0-8AAE-00535845D42D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Hosting", "Happer.Hosting\Happer.Hosting.csproj", "{8FB75B54-A8D7-42B0-8E14-80CB48B91497}"
 EndProject
@@ -26,8 +24,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.TestHttpServer", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.TestHttpClient", "Tests\Happer.TestHttpClient\Happer.TestHttpClient.csproj", "{3231D52B-1EE7-4CD5-B72D-96E8DC267E68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Rpc", "Happer.Rpc\Happer.Rpc.csproj", "{E556F732-A488-4BF2-AB14-C0BFE4FD1DB3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,10 +38,6 @@ Global
 		{7EB615AE-71B7-4D75-8E43-1CEF143E0B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EB615AE-71B7-4D75-8E43-1CEF143E0B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EB615AE-71B7-4D75-8E43-1CEF143E0B33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47E06681-38E9-46C0-8AAE-00535845D42D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47E06681-38E9-46C0-8AAE-00535845D42D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47E06681-38E9-46C0-8AAE-00535845D42D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47E06681-38E9-46C0-8AAE-00535845D42D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FB75B54-A8D7-42B0-8E14-80CB48B91497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FB75B54-A8D7-42B0-8E14-80CB48B91497}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB75B54-A8D7-42B0-8E14-80CB48B91497}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -58,10 +50,6 @@ Global
 		{3231D52B-1EE7-4CD5-B72D-96E8DC267E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3231D52B-1EE7-4CD5-B72D-96E8DC267E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3231D52B-1EE7-4CD5-B72D-96E8DC267E68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E556F732-A488-4BF2-AB14-C0BFE4FD1DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E556F732-A488-4BF2-AB14-C0BFE4FD1DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E556F732-A488-4BF2-AB14-C0BFE4FD1DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E556F732-A488-4BF2-AB14-C0BFE4FD1DB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
