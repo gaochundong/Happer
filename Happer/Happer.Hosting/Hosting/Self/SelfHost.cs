@@ -183,7 +183,7 @@ namespace Happer.Hosting.Self
             }
         }
 
-        private Uri GetBaseUri(Uri requestUri)
+        protected Uri GetBaseUri(Uri requestUri)
         {
             var result = _baseUriList.FirstOrDefault(uri => uri.IsCaseInsensitiveBaseOf(requestUri));
 
