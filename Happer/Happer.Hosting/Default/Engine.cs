@@ -178,5 +178,21 @@ namespace Happer
         {
             return source.AllKeys.ToDictionary<string, string, IEnumerable<string>>(key => key, source.GetValues);
         }
+
+        private static class IgnoredHeaders
+        {
+            private static readonly HashSet<string> _knownHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "content-length",
+                "content-type",
+                "transfer-encoding",
+                "keep-alive"
+            };
+
+            public static bool IsIgnored(string headerName)
+            {
+                return _knownHeaders.Contains(headerName);
+            }
+        }
     }
 }

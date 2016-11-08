@@ -11,25 +11,19 @@ namespace Happer.Hosting.Self
 {
     public class SelfHost
     {
+        private IEngine _engine;
         private IList<Uri> _baseUriList;
         private HttpListener _listener;
         private bool _keepProcessing = false;
-        private IEngine _engine;
-        private string _webSocketSubProtocol;
 
         public SelfHost(IEngine engine, params Uri[] baseUris)
-            : this(engine, null, baseUris)
-        {
-        }
-
-        public SelfHost(IEngine engine, string webSocketSubProtocol, params Uri[] baseUris)
         {
             if (engine == null)
                 throw new ArgumentNullException("engine");
             if (baseUris == null || baseUris.Length == 0)
                 throw new ArgumentNullException("baseUris");
+
             _engine = engine;
-            _webSocketSubProtocol = webSocketSubProtocol;
             _baseUriList = baseUris;
         }
 
