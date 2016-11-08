@@ -15,6 +15,7 @@ namespace Happer.Hosting.Self
         private IList<Uri> _baseUriList;
         private HttpListener _listener;
         private bool _keepProcessing = false;
+        private IRateLimiter _rateLimiter = new CountableRateLimiter(Environment.ProcessorCount * 2);
 
         public SelfHost(IEngine engine, params Uri[] baseUris)
         {
@@ -52,20 +53,30 @@ namespace Happer.Hosting.Self
 
         private async Task StartProcess()
         {
+            // A main thread keep accepting the requests.
             while (_keepProcessing)
             {
+                await _rateLimiter.WaitAsync();
+
                 var context = await _listener.GetContextAsync();
 
                 // Launch a child thread to handle the request.
                 Task.Run(async () =>
                 {
-                    await Process(context).ConfigureAwait(false);
+                    try
+                    {
+                        await Process(context).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        _rateLimiter.Release();
+                    }
                 })
                 .Forget();
             }
         }
 
-        private async Task Process(HttpListenerContext httpContext)
+        protected virtual async Task Process(HttpListenerContext httpContext)
         {
             try
             {
