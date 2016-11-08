@@ -2,11 +2,12 @@
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Happer.Http;
 
 namespace Happer
 {
     public interface IEngine
     {
-        Task HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken);
+        Task<Context> HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken);
     }
 }

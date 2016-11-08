@@ -29,7 +29,7 @@ namespace Happer
             _requestDispatcher = requestDispatcher;
         }
 
-        public async Task HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken)
+        public async Task<Context> HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken)
         {
             if (httpContext == null)
                 throw new ArgumentNullException("httpContext");
@@ -52,6 +52,8 @@ namespace Happer
             }
 
             ConvertResponse(context.Response, httpContext.Response);
+
+            return context;
         }
 
         private Request ConvertRequest(Uri baseUri, HttpListenerRequest httpRequest)

@@ -35,7 +35,7 @@ namespace Happer.Hosting.Self
             _keepProcessing = true;
 
             // Launch a main thread that will listen for requests and then process them.
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 await StartProcess();
             })
@@ -61,7 +61,7 @@ namespace Happer.Hosting.Self
                 var context = await _listener.GetContextAsync();
 
                 // Launch a child thread to handle the request.
-                Task.Run(async () =>
+                Task.Factory.StartNew(async () =>
                 {
                     try
                     {
@@ -94,7 +94,8 @@ namespace Happer.Hosting.Self
                     if (baseUri == null)
                         throw new InvalidOperationException(string.Format(
                             "Unable to locate base URI for request: {0}", httpContext.Request.Url));
-                    await _engine.HandleHttp(httpContext, baseUri, cancellationToken).ConfigureAwait(false);
+                    var context = await _engine.HandleHttp(httpContext, baseUri, cancellationToken).ConfigureAwait(false);
+                    context.Dispose();
                 }
             }
             catch

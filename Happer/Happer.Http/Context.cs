@@ -1,8 +1,9 @@
-﻿using Happer.Http.Routing;
+﻿using System;
+using Happer.Http.Routing;
 
 namespace Happer.Http
 {
-    public class Context
+    public class Context : IDisposable
     {
         public Context()
         {
@@ -39,6 +40,19 @@ namespace Happer.Http
             }
 
             return string.Format("{0}{1}", this.Request.Url.BasePath, path.TrimStart('~'));
+        }
+
+        public void Dispose()
+        {
+            if (this.Request != null)
+            {
+                ((IDisposable)this.Request).Dispose();
+            }
+
+            if (this.Response != null)
+            {
+                this.Response.Dispose();
+            }
         }
     }
 }
