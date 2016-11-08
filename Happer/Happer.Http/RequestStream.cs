@@ -56,26 +56,12 @@ namespace Happer.Http
             this.stream.Position = 0;
         }
 
-        private Task<object> MoveToWritableStream()
+        private Task MoveToWritableStream()
         {
-            var tcs = new TaskCompletionSource<object>();
-
             var sourceStream = this.stream;
-            this.stream = new MemoryStream(StreamExtensions.BufferSize);
+            this.stream = new MemoryStream(4096);
 
-            sourceStream.CopyTo(this, (source, destination, ex) =>
-            {
-                if (ex != null)
-                {
-                    tcs.SetException(ex);
-                }
-                else
-                {
-                    tcs.SetResult(null);
-                }
-            });
-
-            return tcs.Task;
+            return sourceStream.CopyToAsync(this);
         }
 
         public override bool CanRead
@@ -375,60 +361,6 @@ namespace Happer.Http
         public static RequestStream FromStream(Stream stream, long expectedLength, long thresholdLength, bool disableStreamSwitching)
         {
             return new RequestStream(stream, expectedLength, thresholdLength, disableStreamSwitching);
-        }
-    }
-
-    internal static class StreamExtensions
-    {
-        internal const int BufferSize = 4096;
-
-        public static void CopyTo(this Stream source, Stream destination, Action<Stream, Stream, Exception> onComplete)
-        {
-            var buffer = new byte[BufferSize];
-
-            Action<Exception> done = e =>
-            {
-                if (onComplete != null)
-                {
-                    onComplete.Invoke(source, destination, e);
-                }
-            };
-
-            AsyncCallback rc = null;
-
-            rc = readResult =>
-            {
-                try
-                {
-                    var read = source.EndRead(readResult);
-
-                    if (read <= 0)
-                    {
-                        done.Invoke(null);
-                        return;
-                    }
-
-                    destination.BeginWrite(buffer, 0, read, writeResult =>
-                    {
-                        try
-                        {
-                            destination.EndWrite(writeResult);
-                            source.BeginRead(buffer, 0, buffer.Length, rc, null);
-                        }
-                        catch (Exception ex)
-                        {
-                            done.Invoke(ex);
-                        }
-
-                    }, null);
-                }
-                catch (Exception ex)
-                {
-                    done.Invoke(ex);
-                }
-            };
-
-            source.BeginRead(buffer, 0, buffer.Length, rc, null);
         }
     }
 }
