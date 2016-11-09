@@ -28,6 +28,8 @@ namespace Happer.Hosting.Self
             _baseUriList = baseUris;
         }
 
+        public bool IsListening { get { return _listener != null ? _listener.IsListening : false; } }
+
         public void Start()
         {
             StartListener();
