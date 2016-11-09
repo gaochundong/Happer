@@ -11,7 +11,7 @@ namespace Happer.TestHttpServer
         {
             Get["/"] = x =>
             {
-                return "hello world";
+                return "Hello, World!";
             };
 
             Get["/redirect"] = _ => this.Response.AsRedirect("~/text");
