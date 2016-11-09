@@ -46,9 +46,9 @@ namespace Happer.Hosting.Self
 
         public void Stop()
         {
-            _keepProcessing = false;
             if (_listener != null && _listener.IsListening)
             {
+                _keepProcessing = false;
                 _listener.Stop();
             }
         }

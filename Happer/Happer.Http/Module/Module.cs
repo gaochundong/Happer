@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http.Routing;
@@ -11,9 +9,6 @@ namespace Happer.Http
 {
     public abstract class Module
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private static readonly Regex ModuleNameExpression = new Regex(@"(?<name>[\w]+)Module$", RegexOptions.Compiled);
-
         private readonly List<Route> _routes = new List<Route>();
 
         protected Module()
@@ -37,14 +32,15 @@ namespace Happer.Http
         public string GetModuleName()
         {
             var typeName = this.GetType().Name;
-            var nameMatch = ModuleNameExpression.Match(typeName);
 
-            if (nameMatch.Success)
+            var offset = typeName.LastIndexOf("Module", StringComparison.Ordinal);
+
+            if (offset <= 0)
             {
-                return nameMatch.Groups["name"].Value;
+                return typeName;
             }
 
-            return typeName;
+            return typeName.Substring(0, offset);
         }
 
         public Context Context { get; set; }
