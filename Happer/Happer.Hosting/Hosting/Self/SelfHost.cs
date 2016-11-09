@@ -100,7 +100,12 @@ namespace Happer.Hosting.Self
                     context.Dispose();
                 }
             }
-            catch(Exception ex)
+            catch (NotSupportedException)
+            {
+                httpContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
+                httpContext.Response.Close();
+            }
+            catch (Exception)
             {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 httpContext.Response.Close();
