@@ -60,15 +60,13 @@ namespace Happer
         {
             var expectedRequestLength = GetExpectedRequestLength(ConvertToDictionary(httpRequest.Headers));
 
-            var relativeUrl = baseUri.MakeAppLocalPath(httpRequest.Url);
-
             var url = new Url
             {
                 Scheme = httpRequest.Url.Scheme,
                 HostName = httpRequest.Url.Host,
                 Port = httpRequest.Url.IsDefaultPort ? null : (int?)httpRequest.Url.Port,
                 BasePath = baseUri.AbsolutePath.TrimEnd('/'),
-                Path = HttpUtility.UrlDecode(relativeUrl),
+                Path = baseUri.MakeAppLocalPath(httpRequest.Url),
                 Query = httpRequest.Url.Query,
             };
 
