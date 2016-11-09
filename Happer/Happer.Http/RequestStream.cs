@@ -191,7 +191,10 @@ namespace Happer.Http
         {
             if (this.isSafeToDisposeStream)
             {
-                ((IDisposable)this.stream).Dispose();
+                if (this.stream != null)
+                {
+                    this.stream.Dispose();
+                }
 
                 var fileStream = this.stream as FileStream;
                 if (fileStream != null)
@@ -201,6 +204,11 @@ namespace Happer.Http
             }
 
             base.Dispose(disposing);
+        }
+
+        ~RequestStream()
+        {
+            this.Dispose(false);
         }
 
         private void ShiftStreamToFileStreamIfNecessary()
