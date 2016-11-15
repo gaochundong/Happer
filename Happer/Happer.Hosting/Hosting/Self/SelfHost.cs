@@ -87,7 +87,7 @@ namespace Happer.Hosting.Self
                 // Each request is processed in its own execution thread.
                 if (httpContext.Request.IsWebSocketRequest)
                 {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
                     httpContext.Response.Close();
                 }
                 else
