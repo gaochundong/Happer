@@ -18,6 +18,7 @@ namespace Happer.Http
 
         protected Module(string modulePath)
         {
+            // A string containing the root relative path that all paths in the module will be a subset of.
             this.ModulePath = modulePath;
         }
 
@@ -55,7 +56,7 @@ namespace Happer.Http
 
         protected void AddRoute<T>(string method, string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition, string name)
         {
-            _routes.Add(new Route<T>(name == null ? string.Empty : name, method, this.GetFullPath(path), condition, action));
+            _routes.Add(new Route<T>(name ?? string.Empty, method, this.GetFullPath(path), condition, action));
         }
 
         private string GetFullPath(string path)
