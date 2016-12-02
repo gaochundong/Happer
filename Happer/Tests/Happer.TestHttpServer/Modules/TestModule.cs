@@ -53,26 +53,18 @@ namespace Happer.TestHttpServer
 
             Get("/delay", x =>
             {
-                Console.WriteLine("[{1}] Delay starts Thread[{0}].",
-                    Thread.CurrentThread.ManagedThreadId,
-                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"));
+                Console.WriteLine("[{0}] Delay starts Thread[{1}].",
+                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
+                    Thread.CurrentThread.ManagedThreadId);
+
                 Thread.Sleep(TimeSpan.FromSeconds(3));
-                Console.WriteLine("[{1}] Delay ends Thread[{0}].",
-                    Thread.CurrentThread.ManagedThreadId,
-                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"));
+
+                Console.WriteLine("[{0}] Delay ends Thread[{1}].",
+                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
+                    Thread.CurrentThread.ManagedThreadId);
+
                 return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             });
-        }
-
-        private static string GetEmbeddedResourceData(string fileName)
-        {
-            var assem = System.Reflection.Assembly.GetExecutingAssembly();
-            string filePath = assem.FullName.Split(',')[0] + ".Content." + fileName;
-            using (var stream = assem.GetManifestResourceStream(filePath))
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
         }
     }
 }

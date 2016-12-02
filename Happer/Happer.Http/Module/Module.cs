@@ -76,6 +76,8 @@ namespace Happer.Http
             return string.Concat("/", parentPath, "/", relativePath);
         }
 
+        #region HTTP Methods
+
         public virtual void Delete(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
         {
             this.Delete<object>(path, action, condition, name);
@@ -285,5 +287,7 @@ namespace Happer.Http
         {
             this.AddRoute("PUT", path, action, condition, name);
         }
+
+        #endregion
     }
 }
