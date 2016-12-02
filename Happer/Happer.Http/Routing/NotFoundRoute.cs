@@ -3,15 +3,13 @@ using Happer.Http.Responses;
 
 namespace Happer.Http.Routing
 {
-    public class NotFoundRoute : Route
+    /// <summary>
+    /// Route that is returned when the path could not be matched.
+    /// </summary>
+    public class NotFoundRoute : Route<Response>
     {
         public NotFoundRoute(string method, string path)
-            : base(method, path, null, (x, c) => 
-                {
-                    var tcs = new TaskCompletionSource<dynamic>();
-                    tcs.SetResult(new NotFoundResponse());
-                    return tcs.Task;
-                })
+            : base(method, path, null, (x, c) => Task.FromResult<Response>(new NotFoundResponse()))
         {
         }
     }

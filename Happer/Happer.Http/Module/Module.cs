@@ -53,123 +53,237 @@ namespace Happer.Http
 
         public ResponseFormatter Response { get; set; }
 
-        public RouteBuilder Delete
+        protected void AddRoute<T>(string method, string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition, string name)
         {
-            get { return new RouteBuilder("DELETE", this); }
+            _routes.Add(new Route<T>(name == null ? string.Empty : name, method, this.GetFullPath(path), condition, action));
         }
 
-        public RouteBuilder Get
+        private string GetFullPath(string path)
         {
-            get { return new RouteBuilder("GET", this); }
+            var relativePath = (path ?? string.Empty).Trim('/');
+            var parentPath = (this.ModulePath ?? string.Empty).Trim('/');
+
+            if (string.IsNullOrEmpty(parentPath))
+            {
+                return string.Concat("/", relativePath);
+            }
+
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                return string.Concat("/", parentPath);
+            }
+
+            return string.Concat("/", parentPath, "/", relativePath);
         }
 
-        public RouteBuilder Head
+        public virtual void Delete(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
         {
-            get { return new RouteBuilder("HEAD", this); }
+            this.Delete<object>(path, action, condition, name);
         }
 
-        public RouteBuilder Options
+        public virtual void Delete<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
         {
-            get { return new RouteBuilder("OPTIONS", this); }
+            this.Delete(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
         }
 
-        public RouteBuilder Patch
+        public virtual void Delete(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
         {
-            get { return new RouteBuilder("PATCH", this); }
+            this.Delete<object>(path, action, condition, name);
         }
 
-        public RouteBuilder Post
+        public virtual void Delete<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
         {
-            get { return new RouteBuilder("POST", this); }
+            this.Delete(path, (args, ct) => action((DynamicDictionary)args), condition, name);
         }
 
-        public RouteBuilder Put
+        public virtual void Delete(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
         {
-            get { return new RouteBuilder("PUT", this); }
+            this.Delete<object>(path, action, condition, name);
         }
 
-        public class RouteBuilder
+        public virtual void Delete<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
         {
-            private readonly string _method;
-            private readonly Module _parentModule;
+            this.AddRoute("DELETE", path, action, condition, name);
+        }
 
-            public RouteBuilder(string method, Module parentModule)
-            {
-                _method = method;
-                _parentModule = parentModule;
-            }
+        public virtual void Get(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Get<object>(path, action, condition, name);
+        }
 
-            public Func<dynamic, dynamic> this[string path]
-            {
-                set { this.AddRoute(string.Empty, path, null, value); }
-            }
+        public virtual void Get<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Get(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
+        }
 
-            public Func<dynamic, dynamic> this[string path, Func<Context, bool> condition]
-            {
-                set { this.AddRoute(string.Empty, path, condition, value); }
-            }
+        public virtual void Get(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Get<object>(path, action, condition, name);
+        }
 
-            public Func<dynamic, CancellationToken, Task<dynamic>> this[string path, bool runAsync]
-            {
-                set { this.AddRoute(string.Empty, path, null, value); }
-            }
+        public virtual void Get<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Get(path, (args, ct) => action((DynamicDictionary)args), condition, name);
+        }
 
-            public Func<dynamic, CancellationToken, Task<dynamic>> this[string path, Func<Context, bool> condition, bool runAsync]
-            {
-                set { this.AddRoute(string.Empty, path, condition, value); }
-            }
+        public virtual void Get(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Get<object>(path, action, condition, name);
+        }
 
-            public Func<dynamic, dynamic> this[string name, string path]
-            {
-                set { this.AddRoute(name, path, null, value); }
-            }
+        public virtual void Get<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.AddRoute("GET", path, action, condition, name);
+        }
 
-            public Func<dynamic, dynamic> this[string name, string path, Func<Context, bool> condition]
-            {
-                set { this.AddRoute(name, path, condition, value); }
-            }
+        public virtual void Head(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Head<object>(path, action, condition, name);
+        }
 
-            public Func<dynamic, CancellationToken, Task<dynamic>> this[string name, string path, bool runAsync]
-            {
-                set { this.AddRoute(name, path, null, value); }
-            }
+        public virtual void Head<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Head(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
+        }
 
-            public Func<dynamic, CancellationToken, Task<dynamic>> this[string name, string path, Func<Context, bool> condition, bool runAsync]
-            {
-                set { this.AddRoute(name, path, condition, value); }
-            }
+        public virtual void Head(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Head<object>(path, action, condition, name);
+        }
 
-            protected void AddRoute(string name, string path, Func<Context, bool> condition, Func<dynamic, dynamic> value)
-            {
-                var fullPath = GetFullPath(path);
+        public virtual void Head<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Head(path, (args, ct) => action((DynamicDictionary)args), condition, name);
+        }
 
-                _parentModule._routes.Add(Route.FromSync(name, _method, fullPath, condition, value));
-            }
+        public virtual void Head(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Head<object>(path, action, condition, name);
+        }
 
-            protected void AddRoute(string name, string path, Func<Context, bool> condition, Func<dynamic, CancellationToken, Task<dynamic>> value)
-            {
-                var fullPath = GetFullPath(path);
+        public virtual void Head<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.AddRoute("HEAD", path, action, condition, name);
+        }
 
-                _parentModule._routes.Add(new Route(name, _method, fullPath, condition, value));
-            }
+        public virtual void Options(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Options<object>(path, action, condition, name);
+        }
 
-            private string GetFullPath(string path)
-            {
-                var relativePath = (path ?? string.Empty).Trim('/');
-                var parentPath = (_parentModule.ModulePath ?? string.Empty).Trim('/');
+        public virtual void Options<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Options(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
+        }
 
-                if (string.IsNullOrEmpty(parentPath))
-                {
-                    return string.Concat("/", relativePath);
-                }
+        public virtual void Options(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Options<object>(path, action, condition, name);
+        }
 
-                if (string.IsNullOrEmpty(relativePath))
-                {
-                    return string.Concat("/", parentPath);
-                }
+        public virtual void Options<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Options(path, (args, ct) => action((DynamicDictionary)args), condition, name);
+        }
 
-                return string.Concat("/", parentPath, "/", relativePath);
-            }
+        public virtual void Options(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Options<object>(path, action, condition, name);
+        }
+
+        public virtual void Options<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.AddRoute("OPTIONS", path, action, condition, name);
+        }
+
+        public virtual void Patch(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Patch<object>(path, action, condition, name);
+        }
+
+        public virtual void Patch<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Patch(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
+        }
+
+        public virtual void Patch(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Patch<object>(path, action, condition, name);
+        }
+
+        public virtual void Patch<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Patch(path, (args, ct) => action((DynamicDictionary)args), condition, name);
+        }
+
+        public virtual void Patch(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Patch<object>(path, action, condition, name);
+        }
+
+        public virtual void Patch<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.AddRoute("PATCH", path, action, condition, name);
+        }
+
+        public virtual void Post(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Post<object>(path, action, condition, name);
+        }
+
+        public virtual void Post<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Post(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
+        }
+
+        public virtual void Post(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Post<object>(path, action, condition, name);
+        }
+
+        public virtual void Post<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Post(path, (args, ct) => action((DynamicDictionary)args), condition, name);
+        }
+
+        public virtual void Post(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Post<object>(path, action, condition, name);
+        }
+
+        public virtual void Post<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.AddRoute("POST", path, action, condition, name);
+        }
+
+        public virtual void Put(string path, Func<dynamic, object> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Put<object>(path, action, condition, name);
+        }
+
+        public virtual void Put<T>(string path, Func<dynamic, T> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Put(path, args => Task.FromResult(action((DynamicDictionary)args)), condition, name);
+        }
+
+        public virtual void Put(string path, Func<dynamic, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Put<object>(path, action, condition, name);
+        }
+
+        public virtual void Put<T>(string path, Func<dynamic, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Put(path, (args, ct) => action((DynamicDictionary)args), condition, name);
+        }
+
+        public virtual void Put(string path, Func<dynamic, CancellationToken, Task<object>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.Put<object>(path, action, condition, name);
+        }
+
+        public virtual void Put<T>(string path, Func<dynamic, CancellationToken, Task<T>> action, Func<Context, bool> condition = null, string name = null)
+        {
+            this.AddRoute("PUT", path, action, condition, name);
         }
     }
 }

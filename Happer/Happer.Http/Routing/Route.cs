@@ -4,72 +4,54 @@ using System.Threading.Tasks;
 
 namespace Happer.Http.Routing
 {
-    public class Route
+    public abstract class Route
     {
-        public Route(RouteDescription description, Func<dynamic, CancellationToken, Task<dynamic>> action)
+        protected Route(RouteDescription description)
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException("action");
-            }
-
             this.Description = description;
+        }
+
+        protected Route(string name, string method, string path, Func<Context, bool> condition)
+            : this(new RouteDescription(name, method, path, condition))
+        {
+        }
+
+        public RouteDescription Description { get; private set; }
+
+        public abstract Task<object> Invoke(DynamicDictionary parameters, CancellationToken cancellationToken);
+    }
+
+    public class Route<T> : Route
+    {
+        public Route(RouteDescription description, Func<object, CancellationToken, Task<T>> action)
+            : base(description)
+        {
             this.Action = action;
         }
 
-        public Route(string name, string method, string path, Func<Context, bool> condition, Func<dynamic, CancellationToken, Task<dynamic>> action)
+        public Route(string name, string method, string path, Func<Context, bool> condition, Func<object, CancellationToken, Task<T>> action)
             : this(new RouteDescription(name, method, path, condition), action)
         {
         }
 
-        public Route(string method, string path, Func<Context, bool> condition, Func<dynamic, CancellationToken, Task<dynamic>> action)
+        public Route(string method, string path, Func<Context, bool> condition, Func<object, CancellationToken, Task<T>> action)
             : this(string.Empty, method, path, condition, action)
         {
         }
 
-        public Func<dynamic, CancellationToken, Task<dynamic>> Action { get; set; }
+        public Func<object, CancellationToken, Task<T>> Action { get; set; }
 
-        public RouteDescription Description { get; private set; }
-
-        public async Task<dynamic> Invoke(DynamicDictionary parameters, CancellationToken cancellationToken)
+        public override Task<object> Invoke(DynamicDictionary parameters, CancellationToken cancellationToken)
         {
-            return await this.Action.Invoke(parameters, cancellationToken);
-        }
+            var task = this.Action.Invoke(parameters, cancellationToken);
 
-        public static Route FromSync(RouteDescription description, Func<dynamic, dynamic> syncFunc)
-        {
-            return new Route(description, Wrap(syncFunc));
-        }
+            var tcs = new TaskCompletionSource<object>();
 
-        public static Route FromSync(string method, string path, Func<Context, bool> condition, Func<dynamic, dynamic> syncFunc)
-        {
-            return FromSync(string.Empty, method, path, condition, syncFunc);
-        }
+            task.ContinueWith(t => tcs.SetResult(t.Result), TaskContinuationOptions.OnlyOnRanToCompletion);
+            task.ContinueWith(t => tcs.SetException(t.Exception.InnerExceptions), TaskContinuationOptions.OnlyOnFaulted);
+            task.ContinueWith(t => tcs.SetCanceled(), TaskContinuationOptions.OnlyOnCanceled);
 
-        public static Route FromSync(string name, string method, string path, Func<Context, bool> condition, Func<dynamic, dynamic> syncFunc)
-        {
-            return FromSync(new RouteDescription(name, method, path, condition), syncFunc);
-        }
-
-        private static Func<dynamic, CancellationToken, Task<dynamic>> Wrap(Func<object, object> syncFunc)
-        {
-            return (parameters, context) =>
-            {
-                var tcs = new TaskCompletionSource<dynamic>();
-
-                try
-                {
-                    var result = syncFunc.Invoke(parameters);
-
-                    tcs.SetResult(result);
-                }
-                catch (Exception e)
-                {
-                    tcs.SetException(e);
-                }
-
-                return tcs.Task;
-            };
+            return tcs.Task;
         }
     }
 }
