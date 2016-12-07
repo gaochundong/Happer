@@ -40,7 +40,8 @@ namespace Happer.Hosting.Self
             Task.Factory.StartNew(async () =>
             {
                 await StartProcess();
-            })
+            },
+            TaskCreationOptions.LongRunning)
             .ConfigureAwait(false);
         }
 
@@ -73,7 +74,8 @@ namespace Happer.Hosting.Self
                     {
                         _rateLimiter.Release();
                     }
-                })
+                },
+                TaskCreationOptions.PreferFairness)
                 .Forget();
             }
         }
