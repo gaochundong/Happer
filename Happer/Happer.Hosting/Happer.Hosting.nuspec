@@ -12,7 +12,7 @@
     <description>Happer is a C# library for building HTTP based services.</description>
     <copyright>Copyright © 2015-2016 Dennis Gao.</copyright>
     <dependencies>
-      <dependency id="Logrila.Logging" version="1.0.1" />
+      <dependency id="Logrila.Logging" version="1.0.3" />
 	  <dependency id="Newtonsoft.Json" version="9.0.1" />
     </dependencies>
   </metadata>
