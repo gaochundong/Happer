@@ -15,16 +15,24 @@ namespace Happer.Hosting.Self
         private IList<Uri> _baseUriList;
         private HttpListener _listener;
         private bool _keepProcessing = false;
-        private IRateLimiter _rateLimiter = new CountableRateLimiter(Environment.ProcessorCount * 2);
+        private IRateLimiter _rateLimiter = null;
 
         public SelfHost(IEngine engine, params Uri[] baseUris)
+            : this(engine, new CountableRateLimiter(Environment.ProcessorCount * 1), baseUris)
+        {
+        }
+
+        public SelfHost(IEngine engine, IRateLimiter rateLimiter, params Uri[] baseUris)
         {
             if (engine == null)
                 throw new ArgumentNullException("engine");
+            if (rateLimiter == null)
+                throw new ArgumentNullException("rateLimiter");
             if (baseUris == null || baseUris.Length == 0)
                 throw new ArgumentNullException("baseUris");
 
             _engine = engine;
+            _rateLimiter = rateLimiter;
             _baseUriList = baseUris;
         }
 
