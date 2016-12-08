@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Happer.Http;
 
@@ -53,18 +55,41 @@ namespace Happer.TestHttpServer
 
             Get("/delay", x =>
             {
-                Console.WriteLine("[{0}] Delay starts Thread[{1}].",
-                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
-                    Thread.CurrentThread.ManagedThreadId);
+                Print("Delay starts Thread[{0}].",
+                    Thread.CurrentThread.GetDescription());
 
-                Thread.Sleep(TimeSpan.FromSeconds(3));
+                Thread.Sleep(TimeSpan.FromSeconds(8));
 
-                Console.WriteLine("[{0}] Delay ends Thread[{1}].",
-                    DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
-                    Thread.CurrentThread.ManagedThreadId);
+                Print("--------> Delay ends Thread[{0}].",
+                    Thread.CurrentThread.GetDescription());
 
                 return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             });
         }
+
+        static void Print(string format, params object[] args)
+        {
+            Console.WriteLine(string.Format("{0}|{1}",
+                DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
+                string.Format(format, args)));
+        }
+    }
+
+    public static class ThreadExtensions
+    {
+        public static uint GetUnmanagedThreadId(this Thread context)
+        {
+            return GetCurrentThreadId();
+        }
+
+        public static string GetDescription(this Thread context)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "ManagedThreadId[{0}], UnmanagedThreadId[{1}]",
+              context.ManagedThreadId,
+              context.GetUnmanagedThreadId());
+        }
+
+        [DllImport("kernel32.dll")]
+        internal static extern uint GetCurrentThreadId();
     }
 }
