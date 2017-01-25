@@ -55,7 +55,7 @@ namespace Happer.Http
             var sourceStream = this.stream;
             this.stream = new MemoryStream(4096);
 
-            sourceStream.CopyTo(this);
+            sourceStream.CopyTo(this.stream);
         }
 
         public override bool CanRead

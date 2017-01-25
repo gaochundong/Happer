@@ -36,10 +36,9 @@ namespace Happer.Serialization
 
             var contentMimeType = contentType.Split(';')[0];
 
-            return contentMimeType.Equals("application/xml", StringComparison.OrdinalIgnoreCase) ||
-                   contentMimeType.Equals("text/xml", StringComparison.OrdinalIgnoreCase) ||
-                  (contentMimeType.StartsWith("application/vnd", StringComparison.OrdinalIgnoreCase) &&
-                   contentMimeType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase));
+            return contentMimeType.Equals("application/xml", StringComparison.OrdinalIgnoreCase)
+                || contentMimeType.Equals("text/xml", StringComparison.OrdinalIgnoreCase)
+                || contentMimeType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
