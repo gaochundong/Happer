@@ -47,7 +47,7 @@ namespace Happer.Serialization
 
         public void Serialize<TModel>(string contentType, TModel model, Stream outputStream)
         {
-            using (var writer = new StreamWriter(new UnclosableStreamWrapper(outputStream), Encoding.UTF8))
+            using (var writer = new StreamWriter(new UnclosableStreamWrapper(outputStream)))
             {
                 _serializer.Serialize(writer, model);
             }
