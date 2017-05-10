@@ -8,6 +8,12 @@ namespace Happer.Serialization
 {
     public class XmlSerializer : ISerializer
     {
+        private static readonly Encoding _defaultEncoding = new UTF8Encoding(false); // UTF8 NoBOM
+
+        public XmlSerializer()
+        {
+        }
+
         public bool CanSerialize(string contentType)
         {
             return IsXmlType(contentType);
@@ -20,7 +26,7 @@ namespace Happer.Serialization
 
         public void Serialize<TModel>(string contentType, TModel model, Stream outputStream)
         {
-            using (var writer = new StreamWriter(new UnclosableStreamWrapper(outputStream)))
+            using (var writer = new StreamWriter(new UnclosableStreamWrapper(outputStream), _defaultEncoding))
             {
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(TModel));
                 serializer.Serialize(writer, model);

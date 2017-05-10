@@ -10,6 +10,7 @@ namespace Happer.Serialization
     public class JsonSerializer : ISerializer
     {
         private Newtonsoft.Json.JsonSerializer _serializer;
+        private static readonly Encoding _defaultEncoding = new UTF8Encoding(false); // UTF8 NoBOM
 
         public JsonSerializer()
         {
@@ -47,7 +48,7 @@ namespace Happer.Serialization
 
         public void Serialize<TModel>(string contentType, TModel model, Stream outputStream)
         {
-            using (var writer = new StreamWriter(new UnclosableStreamWrapper(outputStream), Encoding.UTF8))
+            using (var writer = new StreamWriter(new UnclosableStreamWrapper(outputStream), _defaultEncoding))
             {
                 _serializer.Serialize(writer, model);
             }

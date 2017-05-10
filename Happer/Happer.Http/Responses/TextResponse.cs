@@ -6,14 +6,25 @@ namespace Happer.Http.Responses
 {
     public class TextResponse : Response
     {
-        public TextResponse(string contents, string contentType = "text/plain", Encoding encoding = null)
+        private const string TextPlainContentType = "text/plain";
+        private static readonly Encoding _defaultEncoding = new UTF8Encoding(false); // UTF8 NoBOM
+
+        public TextResponse(
+            string contents,
+            string contentType = null,
+            Encoding encoding = null)
         {
             if (encoding == null)
             {
-                encoding = Encoding.UTF8;
+                encoding = _defaultEncoding;
             }
 
-            this.ContentType = contentType;
+            if (string.IsNullOrEmpty(contentType))
+            {
+                contentType = TextPlainContentType;
+            }
+
+            this.ContentType = GetContentType(contentType, encoding);
             this.StatusCode = HttpStatusCode.OK;
 
             if (contents != null)
@@ -35,10 +46,10 @@ namespace Happer.Http.Responses
         {
             if (encoding == null)
             {
-                encoding = Encoding.UTF8;
+                encoding = _defaultEncoding;
             }
 
-            this.ContentType = "text/plain";
+            this.ContentType = GetContentType(TextPlainContentType, encoding);
             this.StatusCode = statusCode;
 
             if (contents != null)
@@ -62,6 +73,13 @@ namespace Happer.Http.Responses
                     this.Cookies.Add(cookie);
                 }
             }
+        }
+
+        private static string GetContentType(string contentType, Encoding encoding)
+        {
+            return !contentType.Contains("charset")
+                ? string.Concat(contentType, "; charset=", encoding.WebName)
+                : contentType;
         }
     }
 }

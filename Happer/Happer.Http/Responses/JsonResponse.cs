@@ -1,12 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using Happer.Http.Serialization;
 
 namespace Happer.Http.Responses
 {
     public class JsonResponse<TModel> : Response
     {
+        private static readonly Encoding _defaultEncoding = new UTF8Encoding(false); // UTF8 NoBOM
+
         public JsonResponse(TModel model, ISerializer serializer)
         {
             if (serializer == null)
@@ -26,7 +29,7 @@ namespace Happer.Http.Responses
 
         private static string Encoding
         {
-            get { return string.Concat("; charset=", System.Text.Encoding.UTF8.WebName); }
+            get { return string.Concat("; charset=", _defaultEncoding.WebName); }
         }
 
         private static Action<Stream> GetJsonContents(TModel model, ISerializer serializer)
