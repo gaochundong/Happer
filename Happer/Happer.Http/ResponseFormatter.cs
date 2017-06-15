@@ -44,14 +44,14 @@ namespace Happer.Http
             return new StreamResponse(streamDelegate, contentType);
         }
 
-        public Response AsText(string contents, string contentType)
+        public Response AsText(string contents, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            return new TextResponse(contents, contentType);
+            return new TextResponse(statusCode: statusCode, contents: contents);
         }
 
-        public Response AsText(string contents)
+        public Response AsText(string contents, string contentType, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
-            return new TextResponse(contents);
+            return new TextResponse(statusCode: statusCode, contents: contents, contentType: contentType);
         }
 
         public Response AsImage(string applicationRelativeFilePath)
@@ -73,17 +73,20 @@ namespace Happer.Http
         {
             var serializer = _jsonSerializer ?? (_jsonSerializer = this.Serializers.FirstOrDefault(s => s.CanSerialize("application/json")));
 
-            var r = new JsonResponse<TModel>(model, serializer);
-            r.StatusCode = statusCode;
+            var response = new JsonResponse<TModel>(model, serializer);
+            response.StatusCode = statusCode;
 
-            return r;
+            return response;
         }
 
-        public Response AsXml<TModel>(TModel model)
+        public Response AsXml<TModel>(TModel model, HttpStatusCode statusCode = HttpStatusCode.OK)
         {
             var serializer = _xmlSerializer ?? (_xmlSerializer = this.Serializers.FirstOrDefault(s => s.CanSerialize("application/xml")));
 
-            return new XmlResponse<TModel>(model, serializer);
+            var response = new XmlResponse<TModel>(model, serializer);
+            response.StatusCode = statusCode;
+
+            return response;
         }
 
         public Response AsRedirect(string location, RedirectResponse.RedirectType type = RedirectResponse.RedirectType.SeeOther)

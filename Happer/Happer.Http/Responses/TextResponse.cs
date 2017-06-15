@@ -11,27 +11,21 @@ namespace Happer.Http.Responses
 
         public TextResponse(
             string contents,
-            string contentType = null,
-            Encoding encoding = null)
+            string contentType = null)
         {
-            if (encoding == null)
-            {
-                encoding = _defaultEncoding;
-            }
-
             if (string.IsNullOrEmpty(contentType))
             {
                 contentType = TextPlainContentType;
             }
 
-            this.ContentType = GetContentType(contentType, encoding);
+            this.ContentType = GetContentType(contentType, _defaultEncoding);
             this.StatusCode = HttpStatusCode.OK;
 
             if (contents != null)
             {
                 this.Contents = stream =>
                 {
-                    var data = encoding.GetBytes(contents);
+                    var data = _defaultEncoding.GetBytes(contents);
                     stream.Write(data, 0, data.Length);
                 };
             }
@@ -40,16 +34,22 @@ namespace Happer.Http.Responses
         public TextResponse(
             HttpStatusCode statusCode = HttpStatusCode.OK,
             string contents = null,
+            string contentType = null,
             Encoding encoding = null,
             IDictionary<string, string> headers = null,
             IEnumerable<Cookie> cookies = null)
         {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                contentType = TextPlainContentType;
+            }
+
             if (encoding == null)
             {
                 encoding = _defaultEncoding;
             }
 
-            this.ContentType = GetContentType(TextPlainContentType, encoding);
+            this.ContentType = GetContentType(contentType, encoding);
             this.StatusCode = statusCode;
 
             if (contents != null)
