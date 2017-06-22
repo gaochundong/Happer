@@ -13,6 +13,7 @@ namespace Happer.TestHttpServer
         public TestModule()
         {
             Get("/", x => { return "Hello, World!"; });
+            Get("/hello", x => { Print("Hello, World!"); return "Hello, World!"; });
             Get("/redirect", _ => this.Response.AsRedirect("~/text"));
             Get("/text", x => { return "Text = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
             Get("/time", x => { return "Time = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
