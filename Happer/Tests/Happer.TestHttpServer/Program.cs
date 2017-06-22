@@ -26,6 +26,8 @@ namespace Happer.TestHttpServer
 
             Console.ReadKey();
             Console.WriteLine("Stopped. Goodbye!");
+            host.Stop();
+            Console.ReadKey();
         }
 
         private static void AutoNavigateTo(string uri)

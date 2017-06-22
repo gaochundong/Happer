@@ -61,6 +61,11 @@ namespace Happer.Hosting
             await _semaphore.WaitAsync();
         }
 
+        public async Task WaitAsync(CancellationToken cancellationToken)
+        {
+            await _semaphore.WaitAsync(cancellationToken);
+        }
+
         public async Task<bool> WaitAsync(TimeSpan timeout)
         {
             return await _semaphore.WaitAsync(timeout);
@@ -69,11 +74,6 @@ namespace Happer.Hosting
         public async Task<bool> WaitAsync(int millisecondsTimeout)
         {
             return await _semaphore.WaitAsync(millisecondsTimeout);
-        }
-
-        public async Task WaitAsync(CancellationToken cancellationToken)
-        {
-            await _semaphore.WaitAsync(cancellationToken);
         }
 
         public async Task<bool> WaitAsync(TimeSpan timeout, CancellationToken cancellationToken)

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Happer.Http;
 
 namespace Happer.TestHttpServer
@@ -52,24 +53,43 @@ namespace Happer.TestHttpServer
                 return this.Response.AsHtml(html);
             });
 
+            Get("/thread", x =>
+            {
+                Print("Thread[{0}]", Thread.CurrentThread.GetDescription());
 
+                return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
+            });
+            Get("/sleep", x =>
+            {
+                Print("Sleep starts Thread[{0}].",
+                    Thread.CurrentThread.GetDescription());
+
+                Thread.Sleep(TimeSpan.FromSeconds(8));
+
+                Print("--------> Sleep ends Thread[{0}].",
+                    Thread.CurrentThread.GetDescription());
+
+                return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
+            });
             Get("/delay", x =>
             {
                 Print("Delay starts Thread[{0}].",
                     Thread.CurrentThread.GetDescription());
 
-                Thread.Sleep(TimeSpan.FromSeconds(8));
+                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
 
                 Print("--------> Delay ends Thread[{0}].",
                     Thread.CurrentThread.GetDescription());
 
                 return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             });
-            Get("/print-log", x =>
+            Get("/exception", x =>
             {
-                Print("Thread[{0}]", Thread.CurrentThread.GetDescription());
-
-                return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
+                throw new InvalidOperationException("I want to throw an exception.");
+            });
+            Get("/while", x =>
+            {
+                while (true) { }
             });
         }
 

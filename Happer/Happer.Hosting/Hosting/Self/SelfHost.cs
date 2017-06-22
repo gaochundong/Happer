@@ -6,19 +6,26 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
+using Logrila.Logging;
 
 namespace Happer.Hosting.Self
 {
     public class SelfHost
     {
+        private ILog _log = Logger.Get<SelfHost>();
         private IEngine _engine;
         private IList<Uri> _baseUriList;
         private HttpListener _listener;
-        private bool _keepProcessing = false;
+        private CancellationTokenSource _keepProcessSource = null;
         private IRateLimiter _rateLimiter = null;
 
         public SelfHost(IEngine engine, params Uri[] baseUris)
-            : this(engine, new CountableRateLimiter(Environment.ProcessorCount * 1), baseUris)
+            : this(engine, NoneRateLimiter.None, baseUris)
+        {
+        }
+
+        public SelfHost(IEngine engine, int maxConcurrentNumber, params Uri[] baseUris)
+            : this(engine, new CountableRateLimiter(maxConcurrentNumber), baseUris)
         {
         }
 
@@ -42,59 +49,89 @@ namespace Happer.Hosting.Self
         {
             StartListener();
 
-            _keepProcessing = true;
+            _keepProcessSource = new CancellationTokenSource();
 
-            // Launch a main thread that will listen for requests and then process them.
-            Task.Factory.StartNew(async () =>
+            for (int i = 0; i < Environment.ProcessorCount; i++)
             {
-                await StartProcess();
-            },
-            TaskCreationOptions.LongRunning)
-            .ConfigureAwait(false);
+                try
+                {
+                    var cancellationToken = _keepProcessSource.Token;
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    _listener.GetContextAsync().ContinueWith(HandleContext, _keepProcessSource, cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    // When stopping, Wait will throw 'The operation was canceled.'
+                }
+                catch (InvalidOperationException)
+                {
+                    // When stopping, GetContextAsync will throw 'Please call the Start() method before calling this method.'
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(ex.Message, ex);
+                }
+            }
         }
 
         public void Stop()
         {
+            if (_keepProcessSource != null)
+            {
+                _keepProcessSource.Cancel();
+            }
             if (_listener != null && _listener.IsListening)
             {
-                _keepProcessing = false;
                 _listener.Stop();
             }
         }
 
-        private async Task StartProcess()
-        {
-            // A main thread keep accepting the requests.
-            while (_keepProcessing)
-            {
-                await _rateLimiter.WaitAsync();
-
-                var context = await _listener.GetContextAsync();
-
-                // Launch a child thread to handle the request.
-                Task.Factory.StartNew(async () =>
-                {
-                    try
-                    {
-                        await Process(context).ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        _rateLimiter.Release();
-                    }
-                },
-                TaskCreationOptions.PreferFairness)
-                .Forget();
-            }
-        }
-
-        protected virtual async Task Process(HttpListenerContext httpContext)
+        private void HandleContext(Task<HttpListenerContext> context, object state)
         {
             try
             {
-                var cancellationToken = new CancellationToken();
+                var cancellationToken = ((CancellationTokenSource)state).Token;
+                cancellationToken.ThrowIfCancellationRequested();
 
-                // Each request is processed in its own execution thread.
+                if (!context.IsCompleted)
+                {
+                    context.Wait(cancellationToken);
+                }
+
+                _rateLimiter.Wait(cancellationToken);
+                try
+                {
+                    _listener.GetContextAsync().ContinueWith(HandleContext, state, cancellationToken);
+                    Process(context.Result, cancellationToken).ConfigureAwait(false);
+                }
+                finally
+                {
+                    _rateLimiter.Release();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // When stopping, Wait will throw 'The operation was canceled.'
+            }
+            catch (InvalidOperationException)
+            {
+                // When stopping, GetContextAsync will throw 'Please call the Start() method before calling this method.'
+            }
+            catch (HttpListenerException)
+            {
+                // When stopping, BeginGetContext will throw 'Incorrect function'
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex.Message, ex);
+            }
+        }
+
+        protected virtual async Task Process(HttpListenerContext httpContext, CancellationToken cancellationToken)
+        {
+            try
+            {
                 if (httpContext.Request.IsWebSocketRequest)
                 {
                     httpContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
@@ -115,9 +152,14 @@ namespace Happer.Hosting.Self
                 httpContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
                 httpContext.Response.Close();
             }
-            catch (Exception)
+            catch (InvalidOperationException)
             {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                httpContext.Response.Close();
+            }
+            catch (Exception)
+            {
+                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 httpContext.Response.Close();
             }
         }
