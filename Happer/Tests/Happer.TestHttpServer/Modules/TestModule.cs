@@ -65,6 +65,12 @@ namespace Happer.TestHttpServer
 
                 return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             });
+            Get("/print-log", x =>
+            {
+                Print("Thread[{0}]", Thread.CurrentThread.GetDescription());
+
+                return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
+            });
         }
 
         static void Print(string format, params object[] args)
@@ -84,7 +90,7 @@ namespace Happer.TestHttpServer
 
         public static string GetDescription(this Thread context)
         {
-            return string.Format(CultureInfo.InvariantCulture, "ManagedThreadId[{0}], UnmanagedThreadId[{1}]",
+            return string.Format(CultureInfo.InvariantCulture, "ManagedThreadId[{0,6}], UnmanagedThreadId[{1,6}]",
               context.ManagedThreadId,
               context.GetUnmanagedThreadId());
         }
