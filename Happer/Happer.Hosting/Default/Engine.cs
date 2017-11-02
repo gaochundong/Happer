@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
 using Happer.Http.Utilities;
+using Happer.Pipelining;
 using Happer.StaticContent;
 
 namespace Happer
@@ -34,22 +35,18 @@ namespace Happer
             if (httpContext == null)
                 throw new ArgumentNullException("httpContext");
 
-            var request = ConvertRequest(baseUri, httpContext.Request);
-
-            var context = new Context()
-            {
-                Request = request,
-            };
+            var context = new Context() { Request = ConvertRequest(baseUri, httpContext.Request) };
 
             var staticContentResponse = _staticContentProvider.GetContent(context);
             if (staticContentResponse != null)
             {
                 context.Response = staticContentResponse;
+                return context;
             }
-            else
-            {
-                context.Response = await _requestDispatcher.Dispatch(context, cancellationToken).ConfigureAwait(false);
-            }
+
+            var pipelines = new Pipelines();
+
+            await InvokeRequestLifeCycle(context, cancellationToken, pipelines).ConfigureAwait(false);
 
             ConvertResponse(context.Response, httpContext.Response);
 
@@ -121,6 +118,63 @@ namespace Happer
             httpResponse.StatusCode = (int)response.StatusCode;
 
             OutputWithContentLength(response, httpResponse);
+        }
+
+        private async Task<Context> InvokeRequestLifeCycle(Context context, CancellationToken cancellationToken, IPipelines pipelines)
+        {
+            try
+            {
+                var response = await InvokePreRequestHook(context, cancellationToken, pipelines.BeforeRequest).ConfigureAwait(false);
+
+                if (response == null)
+                {
+                    response = await _requestDispatcher.Dispatch(context, cancellationToken).ConfigureAwait(false);
+                }
+
+                context.Response = response;
+
+                await InvokePostRequestHook(context, cancellationToken, pipelines.AfterRequest).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                InvokeOnErrorHook(context, pipelines.OnError, ex);
+            }
+
+            return context;
+        }
+
+        private static Task<Response> InvokePreRequestHook(Context context, CancellationToken cancellationToken, BeforePipeline pipeline)
+        {
+            return pipeline == null ? Task.FromResult<Response>(null) : pipeline.Invoke(context, cancellationToken);
+        }
+
+        private static Task InvokePostRequestHook(Context context, CancellationToken cancellationToken, AfterPipeline pipeline)
+        {
+            return pipeline == null ? Task.FromResult<object>(null) : pipeline.Invoke(context, cancellationToken);
+        }
+
+        private static void InvokeOnErrorHook(Context context, ErrorPipeline pipeline, Exception errorException)
+        {
+            try
+            {
+                if (pipeline == null)
+                {
+                    throw new RequestPipelinesException(errorException);
+                }
+
+                var onErrorResult = pipeline.Invoke(context, errorException);
+
+                if (onErrorResult == null)
+                {
+                    throw new RequestPipelinesException(errorException);
+                }
+
+                context.Response = new Response { StatusCode = HttpStatusCode.InternalServerError };
+            }
+            catch (Exception)
+            {
+                context.Response = new Response { StatusCode = HttpStatusCode.InternalServerError };
+            }
         }
 
         private static void OutputWithContentLength(Response response, HttpListenerResponse httpResponse)
