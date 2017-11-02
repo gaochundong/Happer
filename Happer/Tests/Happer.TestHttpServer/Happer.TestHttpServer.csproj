@@ -41,6 +41,9 @@
       <HintPath>..\..\packages\Logrila.Logging.NLogIntegration.1.0.3.0\lib\net46\Logrila.Logging.NLogIntegration.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Metrics, Version=0.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Metrics.NET.0.5.3\lib\net45\Metrics.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NLog.4.3.11\lib\net45\NLog.dll</HintPath>
@@ -65,6 +68,10 @@
     <ProjectReference Include="..\..\Happer.Hosting\Happer.Hosting.csproj">
       <Project>{8fb75b54-a8d7-42b0-8e14-80cb48b91497}</Project>
       <Name>Happer.Hosting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Happer.Metrics\Happer.Metrics.csproj">
+      <Project>{2ed5d49a-2e31-46a1-9625-1bc858c1a6ae}</Project>
+      <Name>Happer.Metrics</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

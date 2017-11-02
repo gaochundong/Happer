@@ -18,13 +18,20 @@ namespace Happer
 
         public IEngine BootWith(IModuleContainer container)
         {
+            return BootWith(container, new Pipelines());
+        }
+
+        public IEngine BootWith(IModuleContainer container, IPipelines pipelines)
+        {
             if (container == null)
                 throw new ArgumentNullException("container");
+            if (pipelines == null)
+                throw new ArgumentNullException("pipelines");
 
             var staticContentProvider = BuildStaticContentProvider();
             var requestDispatcher = BuildRequestDispatcher(container);
 
-            return new Engine(staticContentProvider, requestDispatcher);
+            return new Engine(staticContentProvider, requestDispatcher, pipelines);
         }
 
         private StaticContentProvider BuildStaticContentProvider()

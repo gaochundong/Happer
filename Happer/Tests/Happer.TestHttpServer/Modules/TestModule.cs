@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
+using Happer.Metrics;
 
 namespace Happer.TestHttpServer
 {
@@ -12,6 +13,10 @@ namespace Happer.TestHttpServer
     {
         public TestModule()
         {
+            this.MetricForRequestTime("HelloRequest", "Get", "/hello");
+            this.MetricForRequestTime("TextRequest", "Get", "/text");
+            this.MetricForRequestTime("TimeRequest", "Get", "/time");
+
             Get("/", x => { return "Hello, World!"; });
             Get("/hello", x => { Print("Hello, World!"); return "Hello, World!"; });
             Get("/redirect", _ => this.Response.AsRedirect("~/text"));

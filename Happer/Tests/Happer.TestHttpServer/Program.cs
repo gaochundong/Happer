@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using Happer.Hosting.Self;
+using Happer.Http;
 using Logrila.Logging.NLogIntegration;
+using Metrics;
 
 namespace Happer.TestHttpServer
 {
@@ -14,8 +16,15 @@ namespace Happer.TestHttpServer
             var container = new ModuleContainer();
             container.AddModule(new TestModule());
 
+            var pipelines = new Pipelines();
+
+            Metric.Config
+                .WithAllCounters()
+                .WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30)))
+                .WithHapper(pipelines);
+
             var bootstrapper = new Bootstrapper();
-            var engine = bootstrapper.BootWith(container);
+            var engine = bootstrapper.BootWith(container, pipelines);
 
             string uri = "http://localhost:3202/";
             var host = new SelfHost(engine, new Uri(uri));

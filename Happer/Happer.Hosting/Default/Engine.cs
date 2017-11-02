@@ -17,16 +17,25 @@ namespace Happer
     {
         private StaticContentProvider _staticContentProvider;
         private RequestDispatcher _requestDispatcher;
+        private IPipelines _applicationPipelines;
 
         public Engine(StaticContentProvider staticContentProvider, RequestDispatcher requestDispatcher)
+            : this(staticContentProvider, requestDispatcher, new Pipelines())
+        {
+        }
+
+        public Engine(StaticContentProvider staticContentProvider, RequestDispatcher requestDispatcher, IPipelines applicationPipelines)
         {
             if (staticContentProvider == null)
                 throw new ArgumentNullException("staticContentProvider");
             if (requestDispatcher == null)
                 throw new ArgumentNullException("requestDispatcher");
+            if (applicationPipelines == null)
+                throw new ArgumentNullException("applicationPipelines");
 
             _staticContentProvider = staticContentProvider;
             _requestDispatcher = requestDispatcher;
+            _applicationPipelines = applicationPipelines;
         }
 
         public async Task<Context> HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken)
@@ -43,7 +52,7 @@ namespace Happer
                 return context;
             }
 
-            var pipelines = new Pipelines();
+            var pipelines = new Pipelines(_applicationPipelines);
 
             await InvokeRequestLifeCycle(context, cancellationToken, pipelines).ConfigureAwait(false);
 
