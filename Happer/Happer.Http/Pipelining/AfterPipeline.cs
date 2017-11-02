@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Happer.Http;
 
-namespace Happer.Pipelining
+namespace Happer.Http
 {
     public class AfterPipeline : AsyncNamedPipelineBase<Func<Context, CancellationToken, Task>, Action<Context>>
     {

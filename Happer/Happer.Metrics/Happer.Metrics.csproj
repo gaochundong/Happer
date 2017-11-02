@@ -43,17 +43,22 @@
     <Compile Include="..\SolutionVersion.cs">
       <Link>SolutionVersion.cs</Link>
     </Compile>
+    <Compile Include="HapperGlobalMetrics.cs" />
     <Compile Include="HapperMetrics.cs" />
+    <Compile Include="HapperMetricsConfig.cs" />
+    <Compile Include="HapperMetricsEndpointHandler.cs" />
+    <Compile Include="HapperModuleMetricExtensions.cs" />
+    <Compile Include="MetricsModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Happer.Http\Happer.Http.csproj">
       <Project>{7eb615ae-71b7-4d75-8e43-1cef143e0b33}</Project>
       <Name>Happer.Http</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

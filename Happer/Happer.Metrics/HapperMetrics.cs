@@ -1,27 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Happer.Http;
+using Happer.Metrics;
 
 namespace Metrics
 {
-    public class HapperMetrics
+    public static class HapperMetrics
     {
-        //public static MetricsConfig WithNancy(this MetricsConfig config, IPipelines nancyPipelines)
-        //{
-        //    return config.WithNancy(nancyPipelines, nancy => nancy
-        //        .WithNancyMetrics(m => m.WithAllMetrics())
-        //        .WithMetricsModule()
-        //    );
-        //}
+        public static MetricsConfig WithHapper(this MetricsConfig metricsConfig, IPipelines pipelines)
+        {
+            return metricsConfig.WithHapper(pipelines, happer => happer.WithHapperMetrics(m => m.WithAllMetrics()).WithMetricsModule());
+        }
 
-        //public static MetricsConfig WithNancy(this MetricsConfig config, IPipelines nancyPipelines,
-        //    Action<NancyMetricsConfig> nancyConfig)
-        //{
-        //    var currentConfig = config.WithConfigExtension((ctx, hs) => new NancyMetricsConfig(ctx, hs, nancyPipelines), () => NancyMetricsConfig.Disabled);
-        //    nancyConfig(currentConfig);
-        //    return config;
-        //}
+        public static MetricsConfig WithHapper(this MetricsConfig metricsConfig, IPipelines pipelines, Action<HapperMetricsConfig> happerConfig)
+        {
+            var currentConfig = metricsConfig.WithConfigExtension((ctx, hs) => new HapperMetricsConfig(ctx, hs, pipelines), () => HapperMetricsConfig.Disabled);
+            happerConfig(currentConfig);
+            return metricsConfig;
+        }
     }
 }

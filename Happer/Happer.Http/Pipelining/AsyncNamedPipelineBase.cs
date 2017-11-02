@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Happer.Pipelining
+namespace Happer.Http
 {
     public abstract class AsyncNamedPipelineBase<TAsyncDelegate, TSyncDelegate>
     {

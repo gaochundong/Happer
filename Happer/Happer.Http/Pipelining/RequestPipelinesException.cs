@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Happer.Pipelining
+namespace Happer.Http
 {
     public class RequestPipelinesException : Exception
     {

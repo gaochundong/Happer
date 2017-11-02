@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Happer.Http.Routing;
 
 namespace Happer.Http
@@ -7,6 +9,7 @@ namespace Happer.Http
     {
         public Context()
         {
+            this.Items = new Dictionary<string, object>();
         }
 
         public Request Request { get; set; }
@@ -16,6 +19,8 @@ namespace Happer.Http
         public Route ResolvedRoute { get; set; }
 
         public dynamic Parameters { get; set; }
+
+        public IDictionary<string, object> Items { get; private set; }
 
         public string ToFullPath(string path)
         {
@@ -44,6 +49,13 @@ namespace Happer.Http
 
         public void Dispose()
         {
+            foreach (var disposableItem in this.Items.Values.OfType<IDisposable>())
+            {
+                disposableItem.Dispose();
+            }
+
+            this.Items.Clear();
+
             if (this.Request != null)
             {
                 ((IDisposable)this.Request).Dispose();

@@ -58,15 +58,6 @@
     <Compile Include="IBootstrapper.cs" />
     <Compile Include="IEngine.cs" />
     <Compile Include="IModuleContainer.cs" />
-    <Compile Include="Pipeline\IPipelines.cs" />
-    <Compile Include="Pipeline\AfterPipeline.cs" />
-    <Compile Include="Pipeline\AsyncNamedPipelineBase.cs" />
-    <Compile Include="Pipeline\BeforePipeline.cs" />
-    <Compile Include="Pipeline\ErrorPipeline.cs" />
-    <Compile Include="Pipeline\NamedPipelineBase.cs" />
-    <Compile Include="Pipeline\PipelineItem.cs" />
-    <Compile Include="Pipeline\Pipelines.cs" />
-    <Compile Include="Pipeline\RequestPipelinesException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RateLimiting\NoneRateLimiter.cs" />
     <Compile Include="RateLimiting\CountableRateLimiter.cs" />

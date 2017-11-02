@@ -1,7 +1,6 @@
 ﻿using System;
-using Happer.Http;
 
-namespace Happer.Pipelining
+namespace Happer.Http
 {
     public class ErrorPipeline : NamedPipelineBase<Func<Context, Exception, dynamic>>
     {

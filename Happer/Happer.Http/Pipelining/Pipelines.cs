@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Happer.Pipelining
+namespace Happer.Http
 {
     public class Pipelines : IPipelines
     {

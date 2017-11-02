@@ -1,4 +1,4 @@
-﻿namespace Happer.Pipelining
+﻿namespace Happer.Http
 {
     public class PipelineItem<TDelegate>
     {

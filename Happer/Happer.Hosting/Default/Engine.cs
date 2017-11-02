@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
 using Happer.Http.Utilities;
-using Happer.Pipelining;
 using Happer.StaticContent;
 
 namespace Happer

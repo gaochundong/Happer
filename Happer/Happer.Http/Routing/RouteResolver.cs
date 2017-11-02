@@ -88,7 +88,14 @@ namespace Happer.Http.Routing
 
             var optionsResult = new OptionsRoute(path, allowedMethods);
 
-            return new ResolveResult(optionsResult, new DynamicDictionary());
+            return new ResolveResult()
+            {
+                Route = optionsResult,
+                Parameters = new DynamicDictionary(),
+                Before = null,
+                After = null,
+                OnError = null,
+            };
         }
 
         private ResolveResult BuildResult(Context context, MatchResult result)
@@ -98,10 +105,13 @@ namespace Happer.Http.Routing
             var route = associatedModule.Routes.ElementAt(result.RouteIndex);
             var parameters = DynamicDictionary.Create(result.Parameters);
 
-            return new ResolveResult
+            return new ResolveResult()
             {
                 Route = route,
                 Parameters = parameters,
+                Before = associatedModule.Before,
+                After = associatedModule.After,
+                OnError = associatedModule.OnError,
             };
         }
 
@@ -113,10 +123,13 @@ namespace Happer.Http.Routing
 
         private static ResolveResult GetNotFoundResult(Context context)
         {
-            return new ResolveResult
+            return new ResolveResult()
             {
                 Route = new NotFoundRoute(context.Request.Method, context.Request.Path),
                 Parameters = DynamicDictionary.Empty,
+                Before = null,
+                After = null,
+                OnError = null,
             };
         }
 
