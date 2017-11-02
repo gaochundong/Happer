@@ -6,16 +6,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
 using Happer.Metrics;
+using Logrila.Logging;
 
 namespace Happer.TestHttpServer
 {
     public class TestModule : Module
     {
+        private static ILog _log = Logger.Get<TestModule>();
+
         public TestModule()
         {
-            this.MetricForRequestTime("HelloRequest", "Get", "/hello");
-            this.MetricForRequestTime("TextRequest", "Get", "/text");
-            this.MetricForRequestTime("TimeRequest", "Get", "/time");
+            _log.DebugFormat("Initializing the test module.");
+
+            this.MetricForRequestTime("TestModule", "Get", "/time");
 
             Get("/", x => { return "Hello, World!"; });
             Get("/hello", x => { Print("Hello, World!"); return "Hello, World!"; });

@@ -49,26 +49,26 @@ namespace Happer.Metrics
             return WithMetricsModule(m => { }, c => { }, metricsPath);
         }
 
-        public HapperMetricsConfig WithMetricsModule(Action<MetricsEndpointReports> config, string metricsPath = "/metrics")
+        public HapperMetricsConfig WithMetricsModule(Action<MetricsEndpointReports> reportsConfig, string metricsPath = "/metrics")
         {
             if (_isDiabled)
             {
                 return this;
             }
 
-            return WithMetricsModule(m => { }, config, metricsPath);
+            return WithMetricsModule(m => { }, reportsConfig, metricsPath);
         }
 
-        public HapperMetricsConfig WithMetricsModule(Action<Module> moduleConfig, Action<MetricsEndpointReports> config, string metricsPath = "/metrics")
+        public HapperMetricsConfig WithMetricsModule(Action<Module> moduleConfig, Action<MetricsEndpointReports> reportsConfig, string metricsPath = "/metrics")
         {
             if (_isDiabled)
             {
                 return this;
             }
 
-            var reportsConfig = new MetricsEndpointReports(_metricsContext.DataProvider, _healthStatus);
-            config(reportsConfig);
-            MetricsModule.Configure(moduleConfig, reportsConfig, metricsPath);
+            var endpointsReports = new MetricsEndpointReports(_metricsContext.DataProvider, _healthStatus);
+            reportsConfig(endpointsReports);
+            MetricsModule.Configure(moduleConfig, endpointsReports, metricsPath);
             return this;
         }
     }

@@ -10,14 +10,8 @@ namespace Happer.Metrics
         private const string RequestStartTimeKeyName = "RequestStartTimeKey";
         private const string RequestStartTimeKey = "__Metrics.RequestStartTime__";
 
-        private static MetricsContext _happerGlobalMetricsContext;
-        public static MetricsContext HapperGlobalMetricsContext
-        {
-            get
-            {
-                return _happerGlobalMetricsContext ?? Metric.Context("Happer");
-            }
-        }
+        private static MetricsContext _globalMetricsContext = Metric.Context("Happer");
+        public static MetricsContext GlobalMetricsContext { get { return _globalMetricsContext; } }
 
         private readonly MetricsContext _context;
         private readonly IPipelines _pipelines;
@@ -26,7 +20,6 @@ namespace Happer.Metrics
         {
             _context = context;
             _pipelines = pipelines;
-            _happerGlobalMetricsContext = context;
         }
 
         public HapperGlobalMetrics WithAllMetrics()

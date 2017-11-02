@@ -26,7 +26,7 @@ namespace Happer.Metrics
 
         public static void MetricForRequestTime(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
         {
-            var timer = HapperGlobalMetrics.HapperGlobalMetricsContext.Timer(metricName, Unit.Requests);
+            var timer = HapperGlobalMetrics.GlobalMetricsContext.Timer(metricName, Unit.Requests);
             var key = "Metrics.Happer.Request.Timer." + metricName;
 
             module.Before.AddItemToStartOfPipeline(ctx =>
@@ -55,7 +55,7 @@ namespace Happer.Metrics
 
         public static void MetricForResponseSize(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
         {
-            var histogram = HapperGlobalMetrics.HapperGlobalMetricsContext.Histogram(metricName, Unit.Custom("bytes"));
+            var histogram = HapperGlobalMetrics.GlobalMetricsContext.Histogram(metricName, Unit.Custom("bytes"));
 
             module.After.AddItemToEndOfPipeline(ctx =>
             {
@@ -92,7 +92,7 @@ namespace Happer.Metrics
 
         public static void MetricForRequestSize(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
         {
-            var histogram = HapperGlobalMetrics.HapperGlobalMetricsContext.Histogram(metricName, Unit.Custom("bytes"));
+            var histogram = HapperGlobalMetrics.GlobalMetricsContext.Histogram(metricName, Unit.Custom("bytes"));
 
             module.Before.AddItemToStartOfPipeline(ctx =>
             {

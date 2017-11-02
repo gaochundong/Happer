@@ -39,14 +39,14 @@ namespace Happer.Metrics
         }
 
         public MetricsModule()
-            : base(Config.ModulePath ?? "/")
+            : base(MetricsModule.Config.ModulePath ?? "/")
         {
-            if (string.IsNullOrEmpty(Config.ModulePath))
+            if (string.IsNullOrEmpty(MetricsModule.Config.ModulePath))
             {
                 return;
             }
 
-            Config.ModuleConfigAction?.Invoke(this);
+            MetricsModule.Config.ModuleConfigAction?.Invoke(this);
 
             Get("/", _ =>
             {
@@ -66,7 +66,7 @@ namespace Happer.Metrics
             Get("/{path*}", p =>
             {
                 var path = (string)p.path;
-                var endpointResponse = Config.Handler.Process(path, this.Request);
+                var endpointResponse = MetricsModule.Config.Handler.Process(path, this.Request);
                 return endpointResponse != null ? GetResponse(endpointResponse) : HttpStatusCode.NotFound;
             });
         }
