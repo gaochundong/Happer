@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Happer.Metrics</id>
+    <version>1.1.2.0</version>
+    <title>Happer.Metrics</title>
+    <authors>Dennis Gao</authors>
+    <owners>Dennis Gao</owners>
+    <licenseUrl>https://github.com/gaochundong/Happer/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/gaochundong/Happer</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Happer.Metrics is an extension for Happer and Metrics.Net.</description>
+    <copyright>Copyright © 2015-2017 Dennis Gao.</copyright>
+    <dependencies>
+      <dependency id="Logrila.Logging" version="1.0.3" />
+	  <dependency id="Newtonsoft.Json" version="9.0.1" />
+    </dependencies>
+  </metadata>
+</package>
