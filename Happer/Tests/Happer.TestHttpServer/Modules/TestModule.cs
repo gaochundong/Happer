@@ -18,7 +18,12 @@ namespace Happer.TestHttpServer
         {
             _log.DebugFormat("Initializing the test module.");
 
-            this.MetricForRequestTime("TestModule", "Get", "/time");
+            // add metrics for urls
+            this.MetricForRequestTime(typeof(TestModule).Name, "Get", "/");
+            this.MetricForRequestTime(typeof(TestModule).Name, "Get", "/ping");
+            this.MetricForRequestTime(typeof(TestModule).Name, "Get", "/hello");
+            this.MetricForRequestTime(typeof(TestModule).Name, "Get", "/text");
+            this.MetricForRequestTime(typeof(TestModule).Name, "Get", "/time");
 
             Get("/", x => { return "Hello, World!"; });
             Get("/ping", x => { return "pong"; });

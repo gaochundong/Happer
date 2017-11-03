@@ -21,13 +21,22 @@ namespace Happer.TestHttpServer
 
             Metric.Config
                 .WithAllCounters()
-                //.WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30))) // optional -- log to console
-                //.WithHttpEndpoint("http://localhost:3201/") // optional -- listen port
+                //.WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30))) // optional -- display to console
+                //.WithHttpEndpoint("http://localhost:3201/")                        // optional -- listen http port
                 .WithHapper(pipelines);
 
             var container = new ModuleContainer();
             container.AddModule(new TestModule());
-            container.AddModule(new MetricsModule()); // optional -- enable /metrics/text
+
+            // optional -- http://localhost:3202/metrics
+            // optional -- http://localhost:3202/metrics/ping
+            // optional -- http://localhost:3202/metrics/text
+            // optional -- http://localhost:3202/metrics/health
+            // optional -- http://localhost:3202/metrics/json
+            // optional -- http://localhost:3202/metrics/v1/health
+            // optional -- http://localhost:3202/metrics/v1/json
+            // optional -- http://localhost:3202/metrics/v2/json
+            container.AddModule(new MetricsModule());
 
             var bootstrapper = new Bootstrapper();
             var engine = bootstrapper.BootWith(container, pipelines);

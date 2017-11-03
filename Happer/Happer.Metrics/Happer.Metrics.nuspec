@@ -9,11 +9,10 @@
     <licenseUrl>https://github.com/gaochundong/Happer/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/gaochundong/Happer</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Happer.Metrics is an extension for Happer and Metrics.Net.</description>
+    <description>Happer.Metrics is an extension for Happer with Metrics.Net.</description>
     <copyright>Copyright © 2015-2017 Dennis Gao.</copyright>
     <dependencies>
-      <dependency id="Logrila.Logging" version="1.0.3" />
-	  <dependency id="Newtonsoft.Json" version="9.0.1" />
+      <dependency id="Happer" version="1.1.2" />
     </dependencies>
   </metadata>
 </package>
