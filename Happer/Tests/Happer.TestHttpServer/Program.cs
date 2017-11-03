@@ -20,9 +20,9 @@ namespace Happer.TestHttpServer
             var pipelines = new Pipelines();
 
             Metric.Config
-                //.WithHttpEndpoint("http://localhost:3201/") // optional -- listen port
                 .WithAllCounters()
-                .WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30)))
+                //.WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30))) // optional -- log to console
+                //.WithHttpEndpoint("http://localhost:3201/") // optional -- listen port
                 .WithHapper(pipelines);
 
             var container = new ModuleContainer();

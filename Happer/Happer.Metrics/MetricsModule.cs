@@ -34,6 +34,13 @@ namespace Happer.Metrics
 
         internal static void Configure(Action<Module> moduleConfig, MetricsEndpointReports reports, string metricsPath)
         {
+            // /ping
+            // /text
+            // /health
+            // /json
+            // /v1/health
+            // /v1/json
+            // /v2/json
             var handler = new HapperMetricsEndpointHandler(reports.Endpoints);
             MetricsModule.Config = new ModuleConfig(moduleConfig, handler, metricsPath);
         }
@@ -63,6 +70,8 @@ namespace Happer.Metrics
                 return response;
             });
 
+            // Greedy Segment - /{name*} by adding a star/asterisk to the end of the segment name, 
+            // the pattern will match any value from the current forward slash onward.
             Get("/{path*}", p =>
             {
                 var path = (string)p.path;

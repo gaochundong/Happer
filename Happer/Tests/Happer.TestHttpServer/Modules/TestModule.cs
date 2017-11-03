@@ -21,10 +21,12 @@ namespace Happer.TestHttpServer
             this.MetricForRequestTime("TestModule", "Get", "/time");
 
             Get("/", x => { return "Hello, World!"; });
+            Get("/ping", x => { return "pong"; });
             Get("/hello", x => { Print("Hello, World!"); return "Hello, World!"; });
-            Get("/redirect", _ => this.Response.AsRedirect("~/text"));
             Get("/text", x => { return "Text = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
             Get("/time", x => { return "Time = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
+
+            Get("/redirect", _ => this.Response.AsRedirect("~/text"));
             Get("/user/{name}", parameters => { return (string)parameters.name; });
 
             Post("/post", x => { return "POST = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
