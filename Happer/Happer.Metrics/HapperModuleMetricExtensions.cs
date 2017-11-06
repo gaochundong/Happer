@@ -8,6 +8,11 @@ namespace Happer.Metrics
 {
     public static class HapperModuleMetricExtensions
     {
+        public static void MetricForAllRequests(this Module module)
+        {
+            module.MetricForAllRequests(module.GetType().Name);
+        }
+
         public static void MetricForAllRequests(this Module module, string metricName)
         {
             foreach (var route in module.Routes)

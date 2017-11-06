@@ -109,7 +109,7 @@ namespace Happer.TestHttpServer
             //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/time");
             //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/redirect");
             //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/user/{name}");
-            this.MetricForAllRequests(typeof(TestModule).Name);
+            this.MetricForAllRequests();
         }
 
         static void Print(string format, params object[] args)
