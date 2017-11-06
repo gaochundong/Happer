@@ -22,7 +22,9 @@ namespace Happer.TestHttpServer
             Metric.Config
                 .WithAllCounters()
                 //.WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30))) // optional -- display to console
-                //.WithHttpEndpoint("http://localhost:3201/")                        // optional -- listen http port
+                //.WithReporting(r => r.WithCSVReports(@"C:\metrics\csv", TimeSpan.FromSeconds(30)))
+                //.WithReporting(r => r.WithTextFileReport(@"C:\metrics\text\metrics.txt", TimeSpan.FromSeconds(30)))
+                //.WithHttpEndpoint("http://localhost:3201/metrics/")                // optional -- listen http port
                 .WithHapper(pipelines);
 
             var container = new ModuleContainer();
