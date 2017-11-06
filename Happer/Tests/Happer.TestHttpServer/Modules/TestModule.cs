@@ -19,13 +19,13 @@ namespace Happer.TestHttpServer
             _log.DebugFormat("Initializing the test module.");
 
             // ---------------------- metrics ----------------------
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/");
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/ping");
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/hello");
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/text");
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/time");
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/redirect");
-            this.MetricForRequests(typeof(TestModule).Name, "Get", "/user/{name}");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/ping");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/hello");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/text");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/time");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/redirect");
+            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/user/{name}");
             // ---------------------- metrics ----------------------
 
             Get("/", x => { return "Hello, World!"; });

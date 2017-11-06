@@ -8,12 +8,12 @@ namespace Happer.Metrics
 {
     public static class HapperModuleMetricExtensions
     {
-        public static void MetricForRequests(this Module module, string metricName, string method, string pathPrefix)
+        public static void MetricForRequestTimeAndResponseSize(this Module module, string metricName, string method, string pathPrefix)
         {
-            module.MetricForRequests(metricName, module.MakePredicate(method, pathPrefix));
+            module.MetricForRequestTimeAndResponseSize(metricName, module.MakePredicate(method, pathPrefix));
         }
 
-        public static void MetricForRequests(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
+        public static void MetricForRequestTimeAndResponseSize(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
         {
             module.MetricForRequestTime(metricName, routePredicate);
             module.MetricForRequestSize(metricName, routePredicate);
