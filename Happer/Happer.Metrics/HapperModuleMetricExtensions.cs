@@ -15,30 +15,9 @@ namespace Happer.Metrics
 
         public static void MetricForRequests(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
         {
-            module.MetricForRequestCount(metricName, routePredicate);
             module.MetricForRequestTime(metricName, routePredicate);
             module.MetricForRequestSize(metricName, routePredicate);
             module.MetricForResponseSize(metricName, routePredicate);
-        }
-
-        public static void MetricForRequestCount(this Module module, string metricName, string method, string pathPrefix)
-        {
-            module.MetricForRequestCount(metricName, module.MakePredicate(method, pathPrefix));
-        }
-
-        public static void MetricForRequestCount(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
-        {
-            var counter = HapperGlobalMetrics.GlobalMetricsContext.Counter(metricName, Unit.Calls);
-            var key = "Metrics.Happer.Request.Counter." + metricName;
-
-            module.Before.AddItemToStartOfPipeline(ctx =>
-            {
-                if (routePredicate(ctx.ResolvedRoute.Description))
-                {
-                    counter.Increment();
-                }
-                return null;
-            });
         }
 
         public static void MetricForRequestTime(this Module module, string metricName, string method, string pathPrefix)

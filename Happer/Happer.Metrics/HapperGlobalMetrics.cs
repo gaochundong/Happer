@@ -74,7 +74,7 @@ namespace Happer.Metrics
 
         public HapperGlobalMetrics WithActiveRequestCounter(string metricName = "Active Requests")
         {
-            var counter = _context.Counter(metricName, Unit.Custom("ActiveRequests"));
+            var counter = _context.Counter(metricName, Unit.Custom("Active Requests"));
 
             _pipelines.BeforeRequest.AddItemToStartOfPipeline(ctx =>
             {
