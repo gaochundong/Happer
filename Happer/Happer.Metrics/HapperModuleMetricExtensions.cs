@@ -8,6 +8,14 @@ namespace Happer.Metrics
 {
     public static class HapperModuleMetricExtensions
     {
+        public static void MetricForAllRequests(this Module module, string metricName)
+        {
+            foreach (var route in module.Routes)
+            {
+                module.MetricForRequestTimeAndResponseSize(metricName, route.Description.Method, route.Description.Path);
+            }
+        }
+
         public static void MetricForRequestTimeAndResponseSize(this Module module, string metricName, string method, string pathPrefix)
         {
             module.MetricForRequestTimeAndResponseSize(metricName, module.MakePredicate(method, pathPrefix));

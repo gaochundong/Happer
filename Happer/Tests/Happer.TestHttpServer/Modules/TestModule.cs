@@ -18,16 +18,6 @@ namespace Happer.TestHttpServer
         {
             _log.DebugFormat("Initializing the test module.");
 
-            // ---------------------- metrics ----------------------
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/");
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/ping");
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/hello");
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/text");
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/time");
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/redirect");
-            this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/user/{name}");
-            // ---------------------- metrics ----------------------
-
             Get("/", x => { return "Hello, World!"; });
             Get("/ping", x => { return "pong"; });
             Get("/hello", x => { Print("Hello, World!"); return "Hello, World!"; });
@@ -110,6 +100,16 @@ namespace Happer.TestHttpServer
             {
                 while (true) { }
             });
+
+            // ---------------------- metrics ----------------------
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/");
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/ping");
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/hello");
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/text");
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/time");
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/redirect");
+            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/user/{name}");
+            this.MetricForAllRequests(typeof(TestModule).Name);
         }
 
         static void Print(string format, params object[] args)
