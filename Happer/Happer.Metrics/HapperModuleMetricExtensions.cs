@@ -8,15 +8,37 @@ namespace Happer.Metrics
 {
     public static class HapperModuleMetricExtensions
     {
-        public static void MetricForRequestTimeAndResponseSize(this Module module, string metricName, string method, string pathPrefix)
+        public static void MetricForRequests(this Module module, string metricName, string method, string pathPrefix)
         {
-            module.MetricForRequestTimeAndResponseSize(metricName, module.MakePredicate(method, pathPrefix));
+            module.MetricForRequests(metricName, module.MakePredicate(method, pathPrefix));
         }
 
-        public static void MetricForRequestTimeAndResponseSize(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
+        public static void MetricForRequests(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
         {
+            module.MetricForRequestCount(metricName, routePredicate);
             module.MetricForRequestTime(metricName, routePredicate);
+            module.MetricForRequestSize(metricName, routePredicate);
             module.MetricForResponseSize(metricName, routePredicate);
+        }
+
+        public static void MetricForRequestCount(this Module module, string metricName, string method, string pathPrefix)
+        {
+            module.MetricForRequestCount(metricName, module.MakePredicate(method, pathPrefix));
+        }
+
+        public static void MetricForRequestCount(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
+        {
+            var counter = HapperGlobalMetrics.GlobalMetricsContext.Counter(metricName, Unit.Calls);
+            var key = "Metrics.Happer.Request.Counter." + metricName;
+
+            module.Before.AddItemToStartOfPipeline(ctx =>
+            {
+                if (routePredicate(ctx.ResolvedRoute.Description))
+                {
+                    counter.Increment();
+                }
+                return null;
+            });
         }
 
         public static void MetricForRequestTime(this Module module, string metricName, string method, string pathPrefix)
@@ -45,6 +67,25 @@ namespace Happer.Metrics
                     using (ctx.Items[key] as IDisposable) { }
                     ctx.Items.Remove(key);
                 }
+            });
+        }
+
+        public static void MetricForRequestSize(this Module module, string metricName, string method, string pathPrefix)
+        {
+            module.MetricForRequestSize(metricName, module.MakePredicate(method, pathPrefix));
+        }
+
+        public static void MetricForRequestSize(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
+        {
+            var histogram = HapperGlobalMetrics.GlobalMetricsContext.Histogram(metricName, Unit.Custom("bytes"));
+
+            module.Before.AddItemToStartOfPipeline(ctx =>
+            {
+                if (routePredicate(ctx.ResolvedRoute.Description))
+                {
+                    histogram.Update(ctx.Request.Headers.ContentLength);
+                }
+                return null;
             });
         }
 
@@ -85,24 +126,7 @@ namespace Happer.Metrics
             });
         }
 
-        public static void MetricForRequestSize(this Module module, string metricName, string method, string pathPrefix)
-        {
-            module.MetricForRequestSize(metricName, module.MakePredicate(method, pathPrefix));
-        }
-
-        public static void MetricForRequestSize(this Module module, string metricName, Predicate<RouteDescription> routePredicate)
-        {
-            var histogram = HapperGlobalMetrics.GlobalMetricsContext.Histogram(metricName, Unit.Custom("bytes"));
-
-            module.Before.AddItemToStartOfPipeline(ctx =>
-            {
-                if (routePredicate(ctx.ResolvedRoute.Description))
-                {
-                    histogram.Update(ctx.Request.Headers.ContentLength);
-                }
-                return null;
-            });
-        }
+        #region Helper
 
         private static Predicate<RouteDescription> MakePredicate(this Module module, string methodName, string pathPrefix)
         {
@@ -143,5 +167,7 @@ namespace Happer.Metrics
             public override bool CanWrite { get { return true; } }
             public override long Position { get { throw new NotSupportedException(); } set { throw new NotSupportedException(); } }
         }
+
+        #endregion
     }
 }
