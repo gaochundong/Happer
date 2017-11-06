@@ -6,6 +6,12 @@ namespace Happer.Metrics
 {
     public static class HapperMetrics
     {
+        public static IPipelines WithMetrics(this IPipelines pipelines)
+        {
+            Metric.Config.WithAllCounters().WithHapper(pipelines);
+            return pipelines;
+        }
+
         public static MetricsConfig WithHapper(this MetricsConfig metricsConfig, IPipelines pipelines)
         {
             return metricsConfig
