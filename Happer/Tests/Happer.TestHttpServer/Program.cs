@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Happer.Hosting.Self;
 using Happer.Http;
 using Happer.Metrics;
+using Logrila.Logging;
 using Logrila.Logging.NLogIntegration;
 using Metrics;
 
@@ -10,9 +11,12 @@ namespace Happer.TestHttpServer
 {
     class Program
     {
+        private static ILog _log;
+
         static Program()
         {
             NLogLogger.Use();
+            _log = Logger.Get<Program>();
         }
 
         static void Main(string[] args)
@@ -46,12 +50,12 @@ namespace Happer.TestHttpServer
             string uri = "http://localhost:3202/";
             var host = new SelfHost(engine, new Uri(uri));
             host.Start();
-            Console.WriteLine("Server is listening on [{0}].", uri);
+            _log.WarnFormat("Server is listening on [{0}].", uri);
 
             //AutoNavigateTo(uri);
 
             Console.ReadKey();
-            Console.WriteLine("Stopped. Goodbye!");
+            _log.WarnFormat("Stopped. Goodbye!");
             host.Stop();
             Console.ReadKey();
         }

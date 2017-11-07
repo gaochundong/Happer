@@ -16,7 +16,7 @@ namespace Happer.TestHttpServer
 
         public TestModule()
         {
-            _log.DebugFormat("Initializing the test module.");
+            _log.WarnFormat("Initializing the test module.");
 
             Get("/", x => { return "Hello, World!"; });
             Get("/ping", x => { return "pong"; });
