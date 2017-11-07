@@ -33,6 +33,7 @@ namespace Happer.TestHttpServer
 
             var container = new ModuleContainer();
             container.AddModule(new TestModule());
+            container.AddModule(new PerformanceModule());
 
             // optional -- http://localhost:3202/metrics
             // optional -- http://localhost:3202/metrics/ping
