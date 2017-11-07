@@ -51,7 +51,7 @@ namespace Happer.Hosting.Self
 
             _keepProcessSource = new CancellationTokenSource();
 
-            for (int i = 0; i < Environment.ProcessorCount; i++)
+            for (int i = 0; i < GetProcessorThreadCount(); i++)
             {
                 try
                 {
@@ -85,6 +85,18 @@ namespace Happer.Hosting.Self
             {
                 _listener.Stop();
             }
+        }
+
+        private static int GetProcessorThreadCount()
+        {
+            var threadCount = Environment.ProcessorCount >> 1;
+
+            if (threadCount < 1)
+            {
+                return 1;
+            }
+
+            return threadCount;
         }
 
         private void HandleContext(Task<HttpListenerContext> context, object state)
@@ -212,12 +224,20 @@ namespace Happer.Hosting.Self
 
         private bool TryAddUrlReservations()
         {
-            var user = WindowsIdentity.GetCurrent().Name;
+            var urlReservations = new UrlReservations();
+            var user = !string.IsNullOrWhiteSpace(urlReservations.User)
+                ? urlReservations.User
+                : WindowsIdentity.GetCurrent().Name;
 
             foreach (var prefix in GetPrefixes())
             {
-                // netsh http add urlacl url=http://+:22222/test
-                // netsh http add urlacl url=http://+:22222/test user=domain\user
+                // https://msdn.microsoft.com/en-us/library/windows/desktop/cc307223(v=vs.85).aspx
+                // Reserves the specified URL for non-administrator users and accounts. 
+                // The discretionary access control list (DACL) can be specified by using an account name 
+                // with the listen and delegate parameters or by using a security descriptor definition language (SDDL) string.
+                // netsh http add urlacl url=http://+:3202/MyUri
+                // netsh http add urlacl url=http://+:3202/MyUri user=DOMAIN\user
+                // netsh http delete urlacl url=http://+:3202/MyUri
                 if (!NetSh.AddUrlAcl(prefix, user))
                 {
                     return false;
