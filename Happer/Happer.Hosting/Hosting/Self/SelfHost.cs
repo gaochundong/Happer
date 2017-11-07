@@ -51,14 +51,15 @@ namespace Happer.Hosting.Self
 
             _keepProcessSource = new CancellationTokenSource();
 
-            for (int i = 0; i < GetProcessorThreadCount(); i++)
+            int threadCount = GetProcessorThreadCount();
+            for (int i = 0; i < threadCount; i++)
             {
                 try
                 {
                     var cancellationToken = _keepProcessSource.Token;
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    _listener.GetContextAsync().ContinueWith(HandleContext, _keepProcessSource, cancellationToken);
+                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, _keepProcessSource, cancellationToken);
                 }
                 catch (OperationCanceledException)
                 {
@@ -77,45 +78,36 @@ namespace Happer.Hosting.Self
 
         public void Stop()
         {
-            if (_keepProcessSource != null)
+            var keepProcessSource = _keepProcessSource;
+            var listener = _listener;
+
+            if (keepProcessSource != null)
             {
-                _keepProcessSource.Cancel();
+                keepProcessSource.Cancel();
             }
-            if (_listener != null && _listener.IsListening)
+            if (listener != null && listener.IsListening)
             {
-                _listener.Stop();
+                listener.Stop();
             }
         }
 
-        private static int GetProcessorThreadCount()
-        {
-            var threadCount = Environment.ProcessorCount >> 1;
-
-            if (threadCount < 1)
-            {
-                return 1;
-            }
-
-            return threadCount;
-        }
-
-        private void HandleContext(Task<HttpListenerContext> context, object state)
+        private void HandleListenerContext(Task<HttpListenerContext> listenerContext, object state)
         {
             try
             {
                 var cancellationToken = ((CancellationTokenSource)state).Token;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (!context.IsCompleted)
+                if (!listenerContext.IsCompleted)
                 {
-                    context.Wait(cancellationToken);
+                    listenerContext.Wait(cancellationToken);
                 }
 
                 _rateLimiter.Wait(cancellationToken);
                 try
                 {
-                    _listener.GetContextAsync().ContinueWith(HandleContext, state, cancellationToken);
-                    Process(context.Result, cancellationToken).ConfigureAwait(false);
+                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, state, cancellationToken);
+                    Process(listenerContext.Result, cancellationToken).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -140,39 +132,39 @@ namespace Happer.Hosting.Self
             }
         }
 
-        protected virtual async Task Process(HttpListenerContext httpContext, CancellationToken cancellationToken)
+        protected virtual async Task Process(HttpListenerContext listenerContext, CancellationToken cancellationToken)
         {
             try
             {
-                if (httpContext.Request.IsWebSocketRequest)
+                if (listenerContext.Request.IsWebSocketRequest)
                 {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
-                    httpContext.Response.Close();
+                    listenerContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
+                    listenerContext.Response.Close();
                 }
                 else
                 {
-                    var baseUri = GetBaseUri(httpContext.Request.Url);
+                    var baseUri = GetBaseUri(listenerContext.Request.Url);
                     if (baseUri == null)
                         throw new InvalidOperationException(string.Format(
-                            "Unable to locate base URI for request: {0}", httpContext.Request.Url));
-                    var context = await _engine.HandleHttp(httpContext, baseUri, cancellationToken).ConfigureAwait(false);
+                            "Unable to locate base URI for request: {0}", listenerContext.Request.Url));
+                    var context = await _engine.HandleHttp(listenerContext, baseUri, cancellationToken).ConfigureAwait(false);
                     context.Dispose();
                 }
             }
             catch (NotSupportedException)
             {
-                httpContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
-                httpContext.Response.Close();
+                listenerContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
+                listenerContext.Response.Close();
             }
             catch (InvalidOperationException)
             {
-                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                httpContext.Response.Close();
+                listenerContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                listenerContext.Response.Close();
             }
             catch (Exception)
             {
-                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                httpContext.Response.Close();
+                listenerContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                listenerContext.Response.Close();
             }
         }
 
@@ -273,6 +265,18 @@ namespace Happer.Hosting.Self
             }
 
             return new Uri(requestUri.GetLeftPart(UriPartial.Authority));
+        }
+
+        protected static int GetProcessorThreadCount()
+        {
+            var threadCount = Environment.ProcessorCount >> 1;
+
+            if (threadCount < 1)
+            {
+                return 1;
+            }
+
+            return threadCount;
         }
     }
 }
