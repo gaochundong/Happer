@@ -59,7 +59,7 @@ namespace Happer.Hosting.Self
                     var cancellationToken = _keepProcessSource.Token;
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, _keepProcessSource, cancellationToken);
+                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, _keepProcessSource, cancellationToken).Forget();
                 }
                 catch (OperationCanceledException)
                 {
@@ -91,23 +91,18 @@ namespace Happer.Hosting.Self
             }
         }
 
-        private void HandleListenerContext(Task<HttpListenerContext> listenerContext, object state)
+        private async Task HandleListenerContext(Task<HttpListenerContext> listenerContext, object state)
         {
             try
             {
                 var cancellationToken = ((CancellationTokenSource)state).Token;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (!listenerContext.IsCompleted)
-                {
-                    listenerContext.Wait(cancellationToken);
-                }
-
                 _rateLimiter.Wait(cancellationToken);
                 try
                 {
-                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, state, cancellationToken);
-                    Process(listenerContext.Result, cancellationToken).ConfigureAwait(false);
+                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, state, cancellationToken).Forget();
+                    await Process(listenerContext.Result, cancellationToken);
                 }
                 finally
                 {
@@ -136,20 +131,12 @@ namespace Happer.Hosting.Self
         {
             try
             {
-                if (listenerContext.Request.IsWebSocketRequest)
-                {
-                    listenerContext.Response.StatusCode = (int)HttpStatusCode.NotImplemented;
-                    listenerContext.Response.Close();
-                }
-                else
-                {
-                    var baseUri = GetBaseUri(listenerContext.Request.Url);
-                    if (baseUri == null)
-                        throw new InvalidOperationException(string.Format(
-                            "Unable to locate base URI for request: {0}", listenerContext.Request.Url));
-                    var context = await _engine.HandleHttp(listenerContext, baseUri, cancellationToken).ConfigureAwait(false);
-                    context.Dispose();
-                }
+                var baseUri = GetBaseUri(listenerContext.Request.Url);
+                if (baseUri == null)
+                    throw new InvalidOperationException(string.Format(
+                        "Unable to locate base URI for request: {0}", listenerContext.Request.Url));
+                var context = await _engine.HandleHttp(listenerContext, baseUri, cancellationToken).ConfigureAwait(false);
+                context.Dispose();
             }
             catch (NotSupportedException)
             {

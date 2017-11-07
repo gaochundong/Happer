@@ -93,7 +93,7 @@ namespace Happer
                 url,
                 RequestStream.FromStream(httpRequest.InputStream, expectedRequestLength, false),
                 ConvertToDictionary(httpRequest.Headers),
-                (httpRequest.RemoteEndPoint != null) ? httpRequest.RemoteEndPoint.Address.ToString() : null,
+                httpRequest.RemoteEndPoint,
                 protocolVersion,
                 certificate);
         }

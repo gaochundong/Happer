@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using Happer.Http.Utilities;
@@ -23,7 +24,7 @@ namespace Happer.Http
             Url url,
             RequestStream body = null,
             IDictionary<string, IEnumerable<string>> headers = null,
-            string ip = null,
+            IPEndPoint remoteEndPoint = null,
             string protocolVersion = null,
             byte[] certificate = null)
         {
@@ -47,7 +48,7 @@ namespace Happer.Http
                 throw new ArgumentOutOfRangeException("url.Scheme");
             }
 
-            this.UserHostAddress = ip;
+            this.RemoteEndPoint = remoteEndPoint;
 
             this.Url = url;
 
@@ -77,7 +78,7 @@ namespace Happer.Http
 
         public string ProtocolVersion { get; private set; }
 
-        public string UserHostAddress { get; private set; }
+        public IPEndPoint RemoteEndPoint { get; private set; }
 
         public X509Certificate ClientCertificate { get; private set; }
 

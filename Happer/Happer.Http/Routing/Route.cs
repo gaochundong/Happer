@@ -41,17 +41,9 @@ namespace Happer.Http.Routing
 
         public Func<object, CancellationToken, Task<T>> Action { get; set; }
 
-        public override Task<object> Invoke(DynamicDictionary parameters, CancellationToken cancellationToken)
+        public override async Task<object> Invoke(DynamicDictionary parameters, CancellationToken cancellationToken)
         {
-            var task = this.Action.Invoke(parameters, cancellationToken);
-
-            var tcs = new TaskCompletionSource<object>();
-
-            task.ContinueWith(t => tcs.SetResult(t.Result), TaskContinuationOptions.OnlyOnRanToCompletion);
-            task.ContinueWith(t => tcs.SetException(t.Exception.InnerExceptions), TaskContinuationOptions.OnlyOnFaulted);
-            task.ContinueWith(t => tcs.SetCanceled(), TaskContinuationOptions.OnlyOnCanceled);
-
-            return tcs.Task;
+            return await this.Action.Invoke(parameters, cancellationToken).ConfigureAwait(false);
         }
     }
 }
