@@ -24,8 +24,8 @@ namespace Happer.Hosting.Self
         {
         }
 
-        public SelfHost(IEngine engine, int concurrentLevel, params Uri[] baseUris)
-            : this(engine, new CountableRateLimiter(concurrentLevel), baseUris)
+        public SelfHost(IEngine engine, int concurrentAccepts, params Uri[] baseUris)
+            : this(engine, new CountableRateLimiter(concurrentAccepts), baseUris)
         {
         }
 
@@ -54,8 +54,8 @@ namespace Happer.Hosting.Self
             var cancellationToken = _keepProcessSource.Token;
             cancellationToken.ThrowIfCancellationRequested();
 
-            int concurrentLevel = _rateLimiter.CurrentCount;
-            for (int i = 0; i < concurrentLevel; i++)
+            int concurrentAccepts = _rateLimiter.CurrentCount;
+            for (int i = 0; i < concurrentAccepts; i++)
             {
                 try
                 {
