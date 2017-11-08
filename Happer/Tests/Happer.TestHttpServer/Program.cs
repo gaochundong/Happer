@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Happer.Hosting.Self;
 using Happer.Http;
 using Happer.Metrics;
@@ -32,17 +31,25 @@ namespace Happer.TestHttpServer
                 .WithHapper(pipelines);
 
             var container = new ModuleContainer();
+
+            // http://localhost:3202/
+            // http://localhost:3202/ping
+            // http://localhost:3202/hello
+            // http://localhost:3202/text
+            // http://localhost:3202/time
             container.AddModule(new TestModule());
+
+            // http://localhost:3202/plaintext
             container.AddModule(new BenchmarkModule());
 
-            // optional -- http://localhost:3202/metrics
-            // optional -- http://localhost:3202/metrics/ping
-            // optional -- http://localhost:3202/metrics/text
-            // optional -- http://localhost:3202/metrics/health
-            // optional -- http://localhost:3202/metrics/json
-            // optional -- http://localhost:3202/metrics/v1/health
-            // optional -- http://localhost:3202/metrics/v1/json
-            // optional -- http://localhost:3202/metrics/v2/json
+            // http://localhost:3202/metrics
+            // http://localhost:3202/metrics/ping
+            // http://localhost:3202/metrics/text
+            // http://localhost:3202/metrics/health
+            // http://localhost:3202/metrics/json
+            // http://localhost:3202/metrics/v1/health
+            // http://localhost:3202/metrics/v1/json
+            // http://localhost:3202/metrics/v2/json
             container.AddModule(new MetricsModule());
 
             var bootstrapper = new Bootstrapper();
@@ -50,24 +57,16 @@ namespace Happer.TestHttpServer
 
             string uri = "http://localhost:3202/";
             var host = new SelfHost(engine, new Uri(uri));
+
             host.Start();
             _log.WarnFormat("Server is listening on [{0}].", uri);
 
-            //AutoNavigateTo(uri);
-
             Console.ReadKey();
-            _log.WarnFormat("Stopped. Goodbye!");
+
             host.Stop();
-            Console.ReadKey();
-        }
+            _log.WarnFormat("Server is stopped.");
 
-        private static void AutoNavigateTo(string uri)
-        {
-            try
-            {
-                Process.Start(uri);
-            }
-            catch (Exception) { }
+            Console.ReadKey();
         }
     }
 }

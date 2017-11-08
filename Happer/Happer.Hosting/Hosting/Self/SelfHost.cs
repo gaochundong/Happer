@@ -20,12 +20,12 @@ namespace Happer.Hosting.Self
         private IRateLimiter _rateLimiter = null;
 
         public SelfHost(IEngine engine, params Uri[] baseUris)
-            : this(engine, NoneRateLimiter.None, baseUris)
+            : this(engine, new CountableRateLimiter(), baseUris)
         {
         }
 
-        public SelfHost(IEngine engine, int maxConcurrentNumber, params Uri[] baseUris)
-            : this(engine, new CountableRateLimiter(maxConcurrentNumber), baseUris)
+        public SelfHost(IEngine engine, int concurrentLevel, params Uri[] baseUris)
+            : this(engine, new CountableRateLimiter(concurrentLevel), baseUris)
         {
         }
 
@@ -51,14 +51,14 @@ namespace Happer.Hosting.Self
 
             _keepProcessSource = new CancellationTokenSource();
 
-            int threadCount = GetProcessorThreadCount();
-            for (int i = 0; i < threadCount; i++)
+            var cancellationToken = _keepProcessSource.Token;
+            cancellationToken.ThrowIfCancellationRequested();
+
+            int concurrentLevel = _rateLimiter.CurrentCount;
+            for (int i = 0; i < concurrentLevel; i++)
             {
                 try
                 {
-                    var cancellationToken = _keepProcessSource.Token;
-                    cancellationToken.ThrowIfCancellationRequested();
-
                     _listener.GetContextAsync().ContinueWith(HandleListenerContext, _keepProcessSource, cancellationToken).Forget();
                 }
                 catch (OperationCanceledException)
@@ -68,6 +68,10 @@ namespace Happer.Hosting.Self
                 catch (InvalidOperationException)
                 {
                     // When stopping, GetContextAsync will throw 'Please call the Start() method before calling this method.'
+                }
+                catch (HttpListenerException)
+                {
+                    // When stopping, BeginGetContext will throw 'Incorrect function'
                 }
                 catch (Exception ex)
                 {
@@ -101,12 +105,12 @@ namespace Happer.Hosting.Self
                 _rateLimiter.Wait(cancellationToken);
                 try
                 {
-                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, state, cancellationToken).Forget();
                     await Process(listenerContext.Result, cancellationToken);
                 }
                 finally
                 {
                     _rateLimiter.Release();
+                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, state, cancellationToken).Forget();
                 }
             }
             catch (OperationCanceledException)
@@ -252,18 +256,6 @@ namespace Happer.Hosting.Self
             }
 
             return new Uri(requestUri.GetLeftPart(UriPartial.Authority));
-        }
-
-        protected static int GetProcessorThreadCount()
-        {
-            var threadCount = Environment.ProcessorCount >> 1;
-
-            if (threadCount < 1)
-            {
-                return 1;
-            }
-
-            return threadCount;
         }
     }
 }
