@@ -26,7 +26,7 @@ namespace Happer.Hosting
 
         protected static int GetProcessorThreadCount()
         {
-            var threadCount = Environment.ProcessorCount >> 1;
+            var threadCount = Environment.ProcessorCount * 3 / 4;
 
             if (threadCount < 1)
             {
