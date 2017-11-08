@@ -61,7 +61,14 @@ namespace Happer.TestHttpServer
             host.Start();
             _log.WarnFormat("Server is listening on [{0}].", uri);
 
-            Console.ReadKey();
+            while (true)
+            {
+                string input = Console.ReadLine().ToLowerInvariant();
+                if (input == "exit" || input == "quit" || input == "stop")
+                {
+                    break;
+                }
+            }
 
             host.Stop();
             _log.WarnFormat("Server is stopped.");
