@@ -10,7 +10,7 @@ namespace Happer.Hosting
         private bool _disposed = false;
 
         public CountableRateLimiter()
-            : this(GetProcessorThreadCount())
+            : this(Environment.ProcessorCount)
         {
         }
 
@@ -23,18 +23,6 @@ namespace Happer.Hosting
         }
 
         public int CurrentCount { get { return _semaphore.CurrentCount; } }
-
-        protected static int GetProcessorThreadCount()
-        {
-            var threadCount = Environment.ProcessorCount * 3 / 4;
-
-            if (threadCount < 1)
-            {
-                return 1;
-            }
-
-            return threadCount;
-        }
 
         #region Wait
 
