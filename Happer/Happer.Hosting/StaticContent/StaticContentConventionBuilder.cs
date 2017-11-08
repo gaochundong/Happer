@@ -72,7 +72,7 @@ namespace Happer.StaticContent
 
                 var responseFactory = ResponseFactoryCache.GetOrAdd(
                     new ResponseFactoryCacheKey(path, root),
-                    BuildContentDelegate(ctx, root, requestedFile, contentFile, new string[] { }));
+                    BuildContentDelegate(ctx, root, requestedFile, contentFile, ArrayCache.Empty<string>()));
 
                 return responseFactory.Invoke(ctx);
             };
@@ -137,7 +137,7 @@ namespace Happer.StaticContent
                     return ctx => null;
                 }
 
-                return ctx => new FileResponse(fileName, ctx);
+                return ctx => new GenericFileResponse(fileName, ctx);
             };
         }
 

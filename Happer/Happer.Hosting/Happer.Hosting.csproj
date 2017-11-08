@@ -65,6 +65,7 @@
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Serialization\UnclosableStreamWrapper.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
+    <Compile Include="StaticContent\ArrayCache.cs" />
     <Compile Include="StaticContent\RootPathProvider.cs" />
     <Compile Include="StaticContent\StaticContentConventionBuilder.cs" />
     <Compile Include="StaticContent\StaticContentProvider.cs" />

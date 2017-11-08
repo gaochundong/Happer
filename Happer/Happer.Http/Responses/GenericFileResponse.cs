@@ -1,38 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Happer.Http.Utilities;
 
 namespace Happer.Http.Responses
 {
-    public class FileResponse : Response
+    public class GenericFileResponse : Response
     {
-        public static IList<string> SafePaths { get; set; }
+        public static IList<string> SafePaths { get; private set; }
 
         public static int BufferSize = 4 * 1024 * 1024;
 
-        static FileResponse()
+        static GenericFileResponse()
         {
             SafePaths = new List<string>();
         }
 
-        public FileResponse(string filePath) :
-            this(filePath, MimeTypes.GetMimeType(filePath))
+        public GenericFileResponse(string filePath)
+            : this(filePath, MimeTypes.GetMimeType(filePath))
         {
         }
 
-        public FileResponse(string filePath, Context context)
+        public GenericFileResponse(string filePath, Context context)
             : this(filePath, MimeTypes.GetMimeType(filePath), context)
         {
         }
 
-        public FileResponse(string filePath, string contentType, Context context = null)
+        public GenericFileResponse(string filePath, string contentType, Context context = null)
         {
             InitializeGenericFileResponse(filePath, contentType, context);
         }
 
-        public string Filename { get; protected set; }
+        public string FileName { get; protected set; }
 
         private static Action<Stream> GetFileContent(string filePath, long length)
         {
@@ -64,10 +65,12 @@ namespace Happer.Http.Responses
                 StatusCode = HttpStatusCode.NotFound;
                 return;
             }
-            if (SafePaths == null || SafePaths.Count == 0)
+
+            if (SafePaths == null || !SafePaths.Any())
             {
                 throw new InvalidOperationException("No SafePaths defined.");
             }
+
             foreach (var rootPath in SafePaths)
             {
                 string fullPath;
@@ -82,7 +85,7 @@ namespace Happer.Http.Responses
 
                 if (IsSafeFilePath(rootPath, fullPath))
                 {
-                    this.Filename = Path.GetFileName(fullPath);
+                    this.FileName = Path.GetFileName(fullPath);
 
                     this.SetResponseValues(contentType, fullPath, context);
 
@@ -95,7 +98,6 @@ namespace Happer.Http.Responses
 
         private void SetResponseValues(string contentType, string fullPath, Context context)
         {
-            // TODO - set a standard caching time and/or public?
             var fi = new FileInfo(fullPath);
 
             var lastWriteTimeUtc = fi.LastWriteTimeUtc;
@@ -103,14 +105,14 @@ namespace Happer.Http.Responses
             var lastModified = lastWriteTimeUtc.ToString("R");
             var length = fi.Length;
 
-            //if (CacheHelpers.ReturnNotModified(etag, lastWriteTimeUtc, context))
-            //{
-            //    this.StatusCode = HttpStatusCode.NotModified;
-            //    this.ContentType = null;
-            //    this.Contents = Response.NoBody;
+            if (ReturnNotModified(etag, lastWriteTimeUtc, context))
+            {
+                this.StatusCode = HttpStatusCode.NotModified;
+                this.ContentType = null;
+                this.Contents = NoBody;
 
-            //    return;
-            //}
+                return;
+            }
 
             this.Headers["ETag"] = etag;
             this.Headers["Last-Modified"] = lastModified;
@@ -123,6 +125,30 @@ namespace Happer.Http.Responses
 
             this.ContentType = contentType;
             this.StatusCode = HttpStatusCode.OK;
+        }
+
+        private static bool ReturnNotModified(string etag, DateTime? lastModified, Context context)
+        {
+            if (context == null || context.Request == null)
+            {
+                return false;
+            }
+
+            var requestEtag = context.Request.Headers.IfNoneMatch.FirstOrDefault();
+
+            if (requestEtag != null && !string.IsNullOrEmpty(etag))
+            {
+                return requestEtag.Equals(etag, StringComparison.Ordinal);
+            }
+
+            var requestDate = context.Request.Headers.IfModifiedSince;
+
+            if (requestDate.HasValue && lastModified.HasValue && ((int)(lastModified.Value - requestDate.Value).TotalSeconds) <= 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -28,13 +28,11 @@ namespace Happer
             if (pipelines == null)
                 throw new ArgumentNullException("pipelines");
 
-            var staticContentProvider = BuildStaticContentProvider();
             var requestDispatcher = BuildRequestDispatcher(container);
-
-            return new Engine(staticContentProvider, requestDispatcher, pipelines);
+            return new Engine(requestDispatcher, pipelines);
         }
 
-        private StaticContentProvider BuildStaticContentProvider()
+        public StaticContentProvider BuildStaticContentProvider()
         {
             var rootPathProvider = new RootPathProvider();
             var staticContnetConventions = new StaticContentsConventions(new List<Func<Context, string, Response>>
@@ -43,12 +41,12 @@ namespace Happer
             });
             var staticContentProvider = new StaticContentProvider(rootPathProvider, staticContnetConventions);
 
-            FileResponse.SafePaths.Add(rootPathProvider.GetRootPath());
+            GenericFileResponse.SafePaths.Add(rootPathProvider.GetRootPath());
 
             return staticContentProvider;
         }
 
-        private RequestDispatcher BuildRequestDispatcher(IModuleContainer container)
+        public RequestDispatcher BuildRequestDispatcher(IModuleContainer container)
         {
             var moduleCatalog = new ModuleCatalog(
                     () => { return container.GetAllModules(); },

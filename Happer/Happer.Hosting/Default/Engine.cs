@@ -15,49 +15,54 @@ namespace Happer
 {
     public class Engine : IEngine
     {
-        private StaticContentProvider _staticContentProvider;
+        private StaticContentProvider _staticContentProvider = null;
         private RequestDispatcher _requestDispatcher;
-        private IPipelines _applicationPipelines;
+        private IPipelines _pipelines;
 
-        public Engine(StaticContentProvider staticContentProvider, RequestDispatcher requestDispatcher)
-            : this(staticContentProvider, requestDispatcher, new Pipelines())
+        public Engine(RequestDispatcher requestDispatcher)
+            : this(requestDispatcher, new Pipelines())
         {
         }
 
-        public Engine(StaticContentProvider staticContentProvider, RequestDispatcher requestDispatcher, IPipelines applicationPipelines)
+        public Engine(RequestDispatcher requestDispatcher, IPipelines pipelines)
+        {
+            if (requestDispatcher == null)
+                throw new ArgumentNullException("requestDispatcher");
+            if (pipelines == null)
+                throw new ArgumentNullException("pipelines");
+
+            _requestDispatcher = requestDispatcher;
+            _pipelines = pipelines;
+        }
+
+        public Engine EnableStaticContent(StaticContentProvider staticContentProvider)
         {
             if (staticContentProvider == null)
                 throw new ArgumentNullException("staticContentProvider");
-            if (requestDispatcher == null)
-                throw new ArgumentNullException("requestDispatcher");
-            if (applicationPipelines == null)
-                throw new ArgumentNullException("applicationPipelines");
 
             _staticContentProvider = staticContentProvider;
-            _requestDispatcher = requestDispatcher;
-            _applicationPipelines = applicationPipelines;
+
+            return this;
         }
 
         public async Task<Context> HandleHttp(HttpListenerContext httpContext, Uri baseUri, CancellationToken cancellationToken)
         {
-            if (httpContext == null)
-                throw new ArgumentNullException("httpContext");
-
             var context = new Context() { Request = ConvertRequest(baseUri, httpContext.Request) };
 
-            var staticContentResponse = _staticContentProvider.GetContent(context);
-            if (staticContentResponse != null)
+            if (_staticContentProvider != null)
             {
-                context.Response = staticContentResponse;
-                return context;
+                var staticContentResponse = _staticContentProvider.GetContent(context);
+                if (staticContentResponse != null)
+                {
+                    context.Response = staticContentResponse;
+                    ConvertResponse(context.Response, httpContext.Response);
+                    return context;
+                }
             }
 
-            var pipelines = new Pipelines(_applicationPipelines);
-
-            await InvokeRequestLifeCycle(context, cancellationToken, pipelines).ConfigureAwait(false);
-
+            var pipelines = new Pipelines(_pipelines);
+            context = await InvokeRequestLifeCycle(context, cancellationToken, pipelines).ConfigureAwait(false);
             ConvertResponse(context.Response, httpContext.Response);
-
             return context;
         }
 

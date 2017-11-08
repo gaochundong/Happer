@@ -23,10 +23,7 @@ namespace Happer.Http
 
         public IEnumerable<ISerializer> Serializers
         {
-            get
-            {
-                return _serializers;
-            }
+            get { return _serializers; }
         }
 
         public Context Context
@@ -61,12 +58,12 @@ namespace Happer.Http
 
         public Response AsFile(string applicationRelativeFilePath, string contentType)
         {
-            return new FileResponse(applicationRelativeFilePath, contentType);
+            return new GenericFileResponse(applicationRelativeFilePath, contentType, this.Context);
         }
 
         public Response AsFile(string applicationRelativeFilePath)
         {
-            return new FileResponse(applicationRelativeFilePath);
+            return new GenericFileResponse(applicationRelativeFilePath, this.Context);
         }
 
         public Response AsJson<TModel>(TModel model, HttpStatusCode statusCode = HttpStatusCode.OK)
