@@ -12,7 +12,7 @@
     <description>Happer.Metrics is an extension for Happer with Metrics.Net.</description>
     <copyright>Copyright © 2015-2017 Dennis Gao.</copyright>
     <dependencies>
-      <dependency id="Happer" version="1.1.2" />
+      <dependency id="Happer" version="1.1.5" />
       <dependency id="Metrics.NET" version="0.5.3" />
     </dependencies>
   </metadata>
