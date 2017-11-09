@@ -15,9 +15,11 @@ namespace Happer
 {
     public class Engine : IEngine
     {
-        private StaticContentProvider _staticContentProvider = null;
         private RequestDispatcher _requestDispatcher;
         private IPipelines _pipelines;
+
+        private IStaticContentProvider _staticContentProvider = null;
+        private bool _allowChunkedEncoding = true;
 
         public Engine(RequestDispatcher requestDispatcher)
             : this(requestDispatcher, new Pipelines())
@@ -35,12 +37,19 @@ namespace Happer
             _pipelines = pipelines;
         }
 
-        public Engine EnableStaticContent(StaticContentProvider staticContentProvider)
+        public Engine ConfigureStaticContent(IStaticContentProvider staticContentProvider)
         {
             if (staticContentProvider == null)
                 throw new ArgumentNullException("staticContentProvider");
 
             _staticContentProvider = staticContentProvider;
+
+            return this;
+        }
+
+        public Engine ConfigureChunkedTransferEncoding(bool sendChunked = true)
+        {
+            _allowChunkedEncoding = sendChunked;
 
             return this;
         }
@@ -130,7 +139,14 @@ namespace Happer
 
             httpResponse.StatusCode = (int)response.StatusCode;
 
-            OutputWithContentLength(response, httpResponse);
+            if (_allowChunkedEncoding)
+            {
+                OutputWithDefaultTransferEncoding(response, httpResponse);
+            }
+            else
+            {
+                OutputWithContentLength(response, httpResponse);
+            }
         }
 
         private async Task<Context> InvokeRequestLifeCycle(Context context, CancellationToken cancellationToken, IPipelines pipelines)
@@ -187,6 +203,14 @@ namespace Happer
             catch (Exception)
             {
                 context.Response = new Response { StatusCode = HttpStatusCode.InternalServerError };
+            }
+        }
+
+        private static void OutputWithDefaultTransferEncoding(Response response, HttpListenerResponse httpResponse)
+        {
+            using (var output = httpResponse.OutputStream)
+            {
+                response.Contents.Invoke(output);
             }
         }
 

@@ -2,7 +2,7 @@
 
 namespace Happer.StaticContent
 {
-    public class RootPathProvider
+    public class RootPathProvider : IRootPathProvider
     {
         public string GetRootPath()
         {
