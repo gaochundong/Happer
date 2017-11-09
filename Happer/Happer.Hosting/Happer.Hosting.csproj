@@ -66,9 +66,9 @@
     <Compile Include="Serialization\UnclosableStreamWrapper.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="StaticContent\ArrayCache.cs" />
-    <Compile Include="StaticContent\IRootPathProvider.cs" />
+    <Compile Include="IRootPathProvider.cs" />
     <Compile Include="StaticContent\IStaticContentProvider.cs" />
-    <Compile Include="StaticContent\RootPathProvider.cs" />
+    <Compile Include="RootPathProvider.cs" />
     <Compile Include="StaticContent\StaticContentConventionBuilder.cs" />
     <Compile Include="StaticContent\StaticContentProvider.cs" />
     <Compile Include="StaticContent\StaticContentsConventions.cs" />

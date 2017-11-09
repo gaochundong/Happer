@@ -37,7 +37,7 @@ namespace Happer
             _pipelines = pipelines;
         }
 
-        public Engine ConfigureStaticContent(IStaticContentProvider staticContentProvider)
+        public Engine ConfigureStaticContentProvider(IStaticContentProvider staticContentProvider)
         {
             if (staticContentProvider == null)
                 throw new ArgumentNullException("staticContentProvider");
