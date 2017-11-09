@@ -23,7 +23,9 @@ namespace Happer.TestHttpServer
             var pipelines = new Pipelines();
 
             Metric.Config
-                .WithAllCounters()
+                //.WithAllCounters()    // optional -- enable both System and App counters
+                //.WithSystemCounters() // optional -- enable System counters
+                //.WithAppCounters()    // optional -- enable App counters
                 //.WithReporting(r => r.WithConsoleReport(TimeSpan.FromSeconds(30))) // optional -- display to console
                 //.WithReporting(r => r.WithCSVReports(@"C:\metrics\csv", TimeSpan.FromSeconds(30)))
                 //.WithReporting(r => r.WithTextFileReport(@"C:\metrics\text\metrics.txt", TimeSpan.FromSeconds(30)))
@@ -37,6 +39,10 @@ namespace Happer.TestHttpServer
             // http://localhost:3202/hello
             // http://localhost:3202/text
             // http://localhost:3202/time
+            container.AddModule(new SimpleModule());
+
+            // http://localhost:3202/thread
+            // http://localhost:3202/sleep
             container.AddModule(new TestModule());
 
             // http://localhost:3202/plaintext
@@ -55,7 +61,13 @@ namespace Happer.TestHttpServer
             var bootstrapper = new Bootstrapper();
             var engine = bootstrapper.BootWith(container, pipelines);
 
-            string uri = "http://localhost:3202/";
+            // enable "Transfer-Encoding" = "chunked" instead of "Content-Length".
+            //engine.ConfigureChunkedTransferEncoding(false);
+
+            // enable "Content-Encoding" = "gzip" if "Accept-Encoding" requested.
+            //engine.ConfigureResponseCompressionEnabled();
+
+            var uri = "http://localhost:3202/";
             var host = new SelfHost(engine, new Uri(uri));
 
             host.Start();

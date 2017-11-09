@@ -19,7 +19,7 @@ namespace Happer
         private IPipelines _pipelines;
 
         private IStaticContentProvider _staticContentProvider = null;
-        private bool _allowChunkedEncoding = true;
+        private bool _allowChunkedTransferEncoding = true;
 
         public Engine(RequestDispatcher requestDispatcher)
             : this(requestDispatcher, new Pipelines())
@@ -47,9 +47,16 @@ namespace Happer
             return this;
         }
 
-        public Engine ConfigureChunkedTransferEncoding(bool sendChunked = true)
+        public Engine ConfigureChunkedTransferEncoding(bool chunked = true)
         {
-            _allowChunkedEncoding = sendChunked;
+            _allowChunkedTransferEncoding = chunked;
+
+            return this;
+        }
+
+        public Engine ConfigureResponseCompressionEnabled()
+        {
+            _pipelines.EnableResponseCompression();
 
             return this;
         }
@@ -139,7 +146,7 @@ namespace Happer
 
             httpResponse.StatusCode = (int)response.StatusCode;
 
-            if (_allowChunkedEncoding)
+            if (_allowChunkedTransferEncoding)
             {
                 OutputWithDefaultTransferEncoding(response, httpResponse);
             }

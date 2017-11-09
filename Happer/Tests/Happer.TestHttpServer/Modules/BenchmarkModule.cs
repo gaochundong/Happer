@@ -6,7 +6,7 @@ namespace Happer.TestHttpServer
     {
         public BenchmarkModule()
         {
-            Get("/plaintext", x => "Hello, World!");
+            Get("/plaintext", _ => "Hello, World!");
         }
     }
 }

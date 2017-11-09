@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http;
-using Happer.Metrics;
 using Logrila.Logging;
 
 namespace Happer.TestHttpServer
@@ -16,51 +14,7 @@ namespace Happer.TestHttpServer
 
         public TestModule()
         {
-            _log.WarnFormat("Initializing the test module.");
-
-            Get("/", x => { return "Hello, World!"; });
-            Get("/ping", x => { return "pong"; });
-            Get("/hello", x => { Print("Hello, World!"); return "Hello, World!"; });
-            Get("/text", x => { return "Text = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
-            Get("/time", x => { return "Time = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
-
-            Get("/redirect", _ => this.Response.AsRedirect("~/text"));
-            Get("/user/{name}", parameters => { return (string)parameters.name; });
-
-            Post("/post", x => { return "POST = " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff"); });
-            Post("/post-something", x =>
-            {
-                var body = new StreamReader(this.Request.Body).ReadToEnd();
-                return body;
-            });
-
-            Get("/json", x =>
-            {
-                var model = new TestModel() { This = new TestModel() };
-                return this.Response.AsJson(model);
-            });
-
-            Get("/xml", x =>
-            {
-                var model = new TestModel() { This = new TestModel() };
-                return this.Response.AsXml(model);
-            });
-
-            Get("/html", x =>
-            {
-                string html =
-                    @"
-                    <html>
-                    <head>
-                      <title>Hi there</title>
-                    </head>
-                    <body>
-                        This is a page, a simple page.
-                    </body>
-                    </html>
-                    ";
-                return this.Response.AsHtml(html);
-            });
+            _log.WarnFormat("Initializing {0}.", typeof(TestModule).FullName);
 
             Get("/thread", x =>
             {
@@ -101,15 +55,10 @@ namespace Happer.TestHttpServer
                 while (true) { }
             });
 
-            // ---------------------- metrics ----------------------
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/");
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/ping");
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/hello");
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/text");
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/time");
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/redirect");
-            //this.MetricForRequestTimeAndResponseSize(typeof(TestModule).Name, "Get", "/user/{name}");
-            this.MetricForAllRequests();
+            Get("/big/{count}", parameters =>
+            {
+                return new string('x', (int)parameters.count);
+            });
         }
 
         static void Print(string format, params object[] args)

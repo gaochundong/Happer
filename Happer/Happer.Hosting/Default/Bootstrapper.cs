@@ -16,12 +16,22 @@ namespace Happer
         {
         }
 
-        public IEngine BootWith(IModuleContainer container)
+        IEngine IBootstrapper.BootWith(IModuleContainer container)
+        {
+            return BootWith(container);
+        }
+
+        IEngine IBootstrapper.BootWith(IModuleContainer container, IPipelines pipelines)
+        {
+            return BootWith(container, pipelines);
+        }
+
+        public Engine BootWith(IModuleContainer container)
         {
             return BootWith(container, new Pipelines());
         }
 
-        public IEngine BootWith(IModuleContainer container, IPipelines pipelines)
+        public Engine BootWith(IModuleContainer container, IPipelines pipelines)
         {
             if (container == null)
                 throw new ArgumentNullException("container");

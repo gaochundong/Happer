@@ -48,6 +48,7 @@
     <Compile Include="..\SolutionVersion.cs">
       <Link>SolutionVersion.cs</Link>
     </Compile>
+    <Compile Include="Compression\ResponseCompressionExtensions.cs" />
     <Compile Include="Default\Bootstrapper.cs" />
     <Compile Include="Default\Engine.cs" />
     <Compile Include="Default\ModuleContainer.cs" />

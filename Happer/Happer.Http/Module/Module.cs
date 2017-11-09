@@ -21,8 +21,8 @@ namespace Happer.Http
             // A string containing the root relative path that all paths in the module will be a subset of.
             this.ModulePath = modulePath;
 
-            this.After = new AfterPipeline();
             this.Before = new BeforePipeline();
+            this.After = new AfterPipeline();
             this.OnError = new ErrorPipeline();
         }
 
@@ -83,9 +83,9 @@ namespace Happer.Http
 
         #region Pipeline
 
-        public AfterPipeline After { get; set; }
-
         public BeforePipeline Before { get; set; }
+
+        public AfterPipeline After { get; set; }
 
         public ErrorPipeline OnError { get; set; }
 
