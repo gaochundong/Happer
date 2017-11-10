@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.Metrics", "Happer.Me
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.TestBenchmarker", "Tests\Happer.TestBenchmarker\Happer.TestBenchmarker.csproj", "{93744D90-EC58-41BC-AC06-697B25D89475}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Happer.TestHttpClient", "Tests\Happer.TestHttpClient\Happer.TestHttpClient.csproj", "{3D4790DA-3BA6-4201-B802-059593FB5467}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{93744D90-EC58-41BC-AC06-697B25D89475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93744D90-EC58-41BC-AC06-697B25D89475}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93744D90-EC58-41BC-AC06-697B25D89475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D4790DA-3BA6-4201-B802-059593FB5467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4790DA-3BA6-4201-B802-059593FB5467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4790DA-3BA6-4201-B802-059593FB5467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4790DA-3BA6-4201-B802-059593FB5467}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1DFCD593-8814-4DCE-82D8-7F7DC9BE5BD4} = {8AFF4258-7591-43E2-B7AC-CF442F44DEF0}
 		{93744D90-EC58-41BC-AC06-697B25D89475} = {8AFF4258-7591-43E2-B7AC-CF442F44DEF0}
+		{3D4790DA-3BA6-4201-B802-059593FB5467} = {8AFF4258-7591-43E2-B7AC-CF442F44DEF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39C51445-2A3E-456C-AF7D-8D3DE62AEDD5}
