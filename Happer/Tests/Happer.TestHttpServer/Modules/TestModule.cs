@@ -16,6 +16,8 @@ namespace Happer.TestHttpServer
         {
             _log.WarnFormat("Initializing {0}.", typeof(TestModule).FullName);
 
+            ShowThreadPoolSettings();
+
             Get("/thread", x =>
             {
                 Print("Thread[{0}]", Thread.CurrentThread.GetDescription());
@@ -80,6 +82,21 @@ namespace Happer.TestHttpServer
             Console.WriteLine(string.Format("{0}|{1}",
                 DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
                 string.Format(format, args)));
+        }
+
+        static void ShowThreadPoolSettings()
+        {
+            int minWorkerThreads, maxWorkerThreads;
+            int minCompletionPortThreads, maxCompletionPortThreads;
+            int availableWorkerThreads, availableCompletionPortThreads;
+            ThreadPool.GetMinThreads(out minWorkerThreads, out minCompletionPortThreads);
+            ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
+            ThreadPool.GetAvailableThreads(out availableWorkerThreads, out availableCompletionPortThreads);
+
+            _log.DebugFormat("Current thread pool settings:");
+            _log.DebugFormat("   Worker thread: " + minWorkerThreads + " / " + maxWorkerThreads);
+            _log.DebugFormat("       IO thread: " + minCompletionPortThreads + " / " + maxCompletionPortThreads);
+            _log.DebugFormat("Available thread: " + availableWorkerThreads + " / " + availableCompletionPortThreads);
         }
     }
 
