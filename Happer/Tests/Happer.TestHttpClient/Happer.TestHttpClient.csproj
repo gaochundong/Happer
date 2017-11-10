@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Logrila.Logging, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Logrila.Logging.1.0.2.0\lib\net46\Logrila.Logging.dll</HintPath>
+    <Reference Include="Logrila.Logging, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Logrila.Logging.1.0.3.0\lib\net46\Logrila.Logging.dll</HintPath>
     </Reference>
     <Reference Include="Logrila.Logging.NLogIntegration, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Logrila.Logging.NLogIntegration.1.0.3.0\lib\net46\Logrila.Logging.NLogIntegration.dll</HintPath>

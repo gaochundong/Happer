@@ -54,6 +54,20 @@ namespace Happer.TestHttpServer
             {
                 while (true) { }
             });
+            Get("/while/{count}", parameters =>
+            {
+                int count = (int)parameters.count;
+
+                Print("While starts Thread[{0}].",
+                    Thread.CurrentThread.GetDescription());
+
+                while (count > 0) { count--; }
+
+                Print("--------> While ends Thread[{0}].",
+                    Thread.CurrentThread.GetDescription());
+
+                return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
+            });
 
             Get("/big/{count}", parameters =>
             {
