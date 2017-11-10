@@ -103,10 +103,10 @@ namespace Happer.Hosting.Self
                 var cancellationToken = ((CancellationTokenSource)state).Token;
                 cancellationToken.ThrowIfCancellationRequested();
 
-                _rateLimiter.Wait(cancellationToken);
+                await _rateLimiter.WaitAsync(cancellationToken);
                 try
                 {
-                    await Process(listenerContext.Result, cancellationToken);
+                    await Process(listenerContext.Result, cancellationToken).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -140,8 +140,7 @@ namespace Happer.Hosting.Self
                 if (baseUri == null)
                     throw new InvalidOperationException(string.Format(
                         "Unable to locate base URI for request: {0}", listenerContext.Request.Url));
-                var context = await _engine.HandleHttp(listenerContext, baseUri, cancellationToken).ConfigureAwait(false);
-                context.Dispose();
+                using (var context = await _engine.HandleHttp(listenerContext, baseUri, cancellationToken).ConfigureAwait(false)) { }
             }
             catch (NotSupportedException)
             {

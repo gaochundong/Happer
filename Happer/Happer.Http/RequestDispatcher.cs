@@ -25,7 +25,7 @@ namespace Happer.Http
             context.Parameters = resolveResult.Parameters;
             context.ResolvedRoute = resolveResult.Route;
 
-            return await _routeInvoker.Invoke(resolveResult.Route, cancellationToken, resolveResult.Parameters, context);
+            return await _routeInvoker.Invoke(resolveResult.Route, cancellationToken, resolveResult.Parameters, context).ConfigureAwait(false);
         }
 
         private ResolveResult Resolve(Context context)

@@ -36,22 +36,25 @@ namespace Happer.TestHttpServer
 
                 return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             });
-            Get("/delay", x =>
+            Get("/delay", async x =>
             {
                 Print("Delay starts Thread[{0}].",
                     Thread.CurrentThread.GetDescription());
 
-                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+                await Task.Delay(TimeSpan.FromSeconds(8));
 
                 Print("--------> Delay ends Thread[{0}].",
                     Thread.CurrentThread.GetDescription());
 
                 return DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff");
             });
+            Get("/async", async _ => await Task.FromResult("Hello, World!"));
+
             Get("/exception", x =>
             {
                 throw new InvalidOperationException("I want to throw an exception.");
             });
+
             Get("/while", x =>
             {
                 while (true) { }

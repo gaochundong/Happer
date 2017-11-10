@@ -19,7 +19,7 @@ namespace Happer.Http.Routing
 
         public async Task<Response> Invoke(Route route, CancellationToken cancellationToken, DynamicDictionary parameters, Context context)
         {
-            var result = await route.Invoke(parameters, cancellationToken);
+            var result = await route.Invoke(parameters, cancellationToken).ConfigureAwait(false);
             return this.negotiator.NegotiateResponse(result, context);
         }
     }
