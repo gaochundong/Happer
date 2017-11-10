@@ -18,7 +18,7 @@ namespace Happer.Hosting.Self
         private HttpListener _listener;
         private CancellationTokenSource _keepProcessSource = null;
         private IRateLimiter _rateLimiter = null;
-        private static readonly int DefaultConcurrentAccepts = 5 * Environment.ProcessorCount;
+        private static readonly int DefaultConcurrentAccepts = 3 * Environment.ProcessorCount;
 
         public SelfHost(IEngine engine, params Uri[] baseUris)
             : this(engine, DefaultConcurrentAccepts, baseUris)
