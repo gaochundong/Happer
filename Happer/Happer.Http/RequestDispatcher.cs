@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Happer.Http.Routing;
@@ -38,7 +37,7 @@ namespace Happer.Http
 
         private ResolveResult InvokeRouteResolver(Context context, string path, IEnumerable<Tuple<string, decimal>> acceptHeaders)
         {
-            context.Request.Headers.Accept = acceptHeaders.ToList();
+            context.Request.Headers.Accept = acceptHeaders;
             context.Request.Url.Path = path;
 
             return _routeResolver.Resolve(context);
