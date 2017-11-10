@@ -102,6 +102,21 @@ namespace Happer.Hosting
 
         #endregion
 
+        public void Reset()
+        {
+            while (true)
+            {
+                try
+                {
+                    _semaphore.Release();
+                }
+                catch (SemaphoreFullException)
+                {
+                    break;
+                }
+            }
+        }
+
         #region IDisposable Members
 
         public void Dispose()

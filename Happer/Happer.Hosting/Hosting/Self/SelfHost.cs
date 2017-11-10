@@ -51,34 +51,38 @@ namespace Happer.Hosting.Self
             StartListener();
 
             _keepProcessSource = new CancellationTokenSource();
-
             var cancellationToken = _keepProcessSource.Token;
             cancellationToken.ThrowIfCancellationRequested();
 
-            int concurrentAccepts = _rateLimiter.CurrentCount;
-            for (int i = 0; i < concurrentAccepts; i++)
+            Task.Run(() =>
             {
-                try
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, _keepProcessSource, cancellationToken).Forget();
+                    try
+                    {
+                        _rateLimiter.Wait(cancellationToken);
+                        _listener.GetContextAsync().ContinueWith(async (contextTask) =>
+                        {
+                            try
+                            {
+                                _rateLimiter.Release();
+                                if (contextTask.IsFaulted || contextTask.IsCanceled) return;
+
+                                var context = await contextTask.ConfigureAwait(false);
+                                await this.Process(context, cancellationToken).ConfigureAwait(false);
+                            }
+                            catch (Exception ex)
+                            {
+                                HandleListenerException(ex);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleListenerException(ex);
+                    }
                 }
-                catch (OperationCanceledException)
-                {
-                    // When stopping, Wait will throw 'The operation was canceled.'
-                }
-                catch (InvalidOperationException)
-                {
-                    // When stopping, GetContextAsync will throw 'Please call the Start() method before calling this method.'
-                }
-                catch (HttpListenerException)
-                {
-                    // When stopping, BeginGetContext will throw 'Incorrect function'
-                }
-                catch (Exception ex)
-                {
-                    _log.Error(ex.Message, ex);
-                }
-            }
+            });
         }
 
         public void Stop()
@@ -93,42 +97,6 @@ namespace Happer.Hosting.Self
             if (listener != null && listener.IsListening)
             {
                 listener.Stop();
-            }
-        }
-
-        private async Task HandleListenerContext(Task<HttpListenerContext> listenerContext, object state)
-        {
-            try
-            {
-                var cancellationToken = ((CancellationTokenSource)state).Token;
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await _rateLimiter.WaitAsync(cancellationToken);
-                try
-                {
-                    await Process(listenerContext.Result, cancellationToken).ConfigureAwait(false);
-                }
-                finally
-                {
-                    _rateLimiter.Release();
-                    _listener.GetContextAsync().ContinueWith(HandleListenerContext, state, cancellationToken).Forget();
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // When stopping, Wait will throw 'The operation was canceled.'
-            }
-            catch (InvalidOperationException)
-            {
-                // When stopping, GetContextAsync will throw 'Please call the Start() method before calling this method.'
-            }
-            catch (HttpListenerException)
-            {
-                // When stopping, BeginGetContext will throw 'Incorrect function'
-            }
-            catch (Exception ex)
-            {
-                _log.Error(ex.Message, ex);
             }
         }
 
@@ -256,6 +224,26 @@ namespace Happer.Hosting.Self
             }
 
             return new Uri(requestUri.GetLeftPart(UriPartial.Authority));
+        }
+
+        private void HandleListenerException(Exception ex)
+        {
+            if (ex is OperationCanceledException)
+            {
+                // When stopping, Wait will throw 'The operation was canceled.'
+            }
+            else if (ex is InvalidOperationException)
+            {
+                // When stopping, GetContextAsync will throw 'Please call the Start() method before calling this method.'
+            }
+            else if (ex is HttpListenerException)
+            {
+                // When stopping, BeginGetContext will throw 'Incorrect function'
+            }
+            else
+            {
+                _log.Error(ex.Message, ex);
+            }
         }
     }
 }

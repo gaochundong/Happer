@@ -80,6 +80,14 @@ namespace Happer.TestHttpServer
                 {
                     break;
                 }
+                else if (input == "restart")
+                {
+                    _log.WarnFormat("Server is restarting.");
+                    host.Stop();
+                    _log.WarnFormat("Server is stopped.");
+                    host.Start();
+                    _log.WarnFormat("Server is listening on [{0}].", uri);
+                }
             }
 
             host.Stop();
