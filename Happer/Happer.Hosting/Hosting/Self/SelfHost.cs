@@ -69,7 +69,7 @@ namespace Happer.Hosting.Self
                                 if (contextTask.IsFaulted || contextTask.IsCanceled) return;
 
                                 var context = await contextTask.ConfigureAwait(false);
-                                await this.Process(context, cancellationToken).ConfigureAwait(false);
+                                await Process(context, cancellationToken).ConfigureAwait(false);
                             }
                             catch (Exception ex)
                             {
@@ -163,7 +163,7 @@ namespace Happer.Hosting.Self
             }
             catch (HttpListenerException e)
             {
-                int ACCESS_DENIED = 5;
+                const int ACCESS_DENIED = 5;
                 if (e.ErrorCode == ACCESS_DENIED)
                 {
                     return false;

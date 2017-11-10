@@ -14,9 +14,7 @@ namespace Happer.TestHttpServer
 
         public TestModule()
         {
-            _log.WarnFormat("Initializing {0}.", typeof(TestModule).FullName);
-
-            ShowThreadPoolSettings();
+            //ShowThreadPoolSettings();
 
             Get("/thread", x =>
             {

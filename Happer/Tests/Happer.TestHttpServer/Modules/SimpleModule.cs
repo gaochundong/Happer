@@ -12,8 +12,6 @@ namespace Happer.TestHttpServer
 
         public SimpleModule()
         {
-            _log.WarnFormat("Initializing {0}.", typeof(SimpleModule).FullName);
-
             Get("/", x => { return "Hello, World!"; });
             Get("/ping", x => { return "pong"; });
             Get("/hello", x => { return "Hello, World!"; });

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Happer.Hosting
 {
+    [DebuggerDisplay("CurrentCount = {CurrentCount}")]
     public class CountableRateLimiter : IRateLimiter, IDisposable
     {
         private readonly SemaphoreSlim _semaphore;
