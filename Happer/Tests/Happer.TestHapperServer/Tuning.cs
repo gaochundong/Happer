@@ -13,36 +13,47 @@ namespace Happer.TestHapperServer
     /// </summary>
     internal static class Tuning
     {
+        public static void TuneAll(SelfHost host)
+        {
+            ConfigureThreadPool();
+            ConfigureIgnoreWriteExceptions(host);
+            ConfigureRequestQueueLength(host);
+        }
+
         public static void ConfigureThreadPool()
         {
+            // The CLR ThreadPool injects new threads at a rate of about 2 per second.
             // To improve CPU utilization, increase the number of threads that the .NET thread pool expands by when
             // a burst of requests come in. We could do this by editing machine.config/system.web/processModel/minWorkerThreads,
             // but that seems too global a change, so we do it in code for just our AppPool. More info:
             // http://support.microsoft.com/kb/821268
-            // http://blogs.msdn.com/b/tmarq/archive/2007/07/21/asp-net-thread-usage-on-iis-7-0-and-6-0.aspx
-            // http://blogs.msdn.com/b/perfworld/archive/2010/01/13/how-can-i-improve-the-performance-of-asp-net-by-adjusting-the-clr-thread-throttling-properties.aspx
+            // https://blogs.msdn.microsoft.com/tmarq/2007/07/20/asp-net-thread-usage-on-iis-7-5-iis-7-0-and-iis-6-0/
+            // https://blogs.msdn.microsoft.com/perfworld/2010/01/13/how-can-i-improve-the-performance-of-asp-net-by-adjusting-the-clr-thread-throttling-properties/
+            // https://msdn.microsoft.com/en-us/library/system.threading.threadpool.setminthreads(v=vs.110).aspx
 
-            int newMinWorkerThreadsPerLogicalProcessor = 8;
-            int newMinWorkerThreads = newMinWorkerThreadsPerLogicalProcessor * Environment.ProcessorCount;
+            int newMinWorkerThreadsPerLogicalProcessor = 3;
+            int newMinWorkerThreads = newMinWorkerThreadsPerLogicalProcessor * Environment.ProcessorCount + 32;
 
             int minWorkerThreads, minCompletionPortThreads;
             ThreadPool.GetMinThreads(out minWorkerThreads, out minCompletionPortThreads);
-            ThreadPool.SetMinThreads(newMinWorkerThreads, minCompletionPortThreads);
+
+            if (ThreadPool.SetMinThreads(newMinWorkerThreads, minCompletionPortThreads))
+            {
+                ShowThreadPoolSettings();
+            }
         }
 
         public static void ShowThreadPoolSettings()
         {
             int minWorkerThreads, maxWorkerThreads;
             int minCompletionPortThreads, maxCompletionPortThreads;
-            int availableWorkerThreads, availableCompletionPortThreads;
+
             ThreadPool.GetMinThreads(out minWorkerThreads, out minCompletionPortThreads);
             ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
-            ThreadPool.GetAvailableThreads(out availableWorkerThreads, out availableCompletionPortThreads);
 
             Console.WriteLine("Current thread pool settings:");
-            Console.WriteLine("   Worker thread: " + minWorkerThreads + " / " + maxWorkerThreads);
-            Console.WriteLine("       IO thread: " + minCompletionPortThreads + " / " + maxCompletionPortThreads);
-            Console.WriteLine("Available thread: " + availableWorkerThreads + " / " + availableCompletionPortThreads);
+            Console.WriteLine("   Worker threads: " + minWorkerThreads + " / " + maxWorkerThreads);
+            Console.WriteLine("       IO threads: " + minCompletionPortThreads + " / " + maxCompletionPortThreads);
         }
 
         public static void ConfigureIgnoreWriteExceptions(SelfHost host)
@@ -93,13 +104,14 @@ namespace Happer.TestHapperServer
             }
         }
 
+        // https://msdn.microsoft.com/en-us/library/windows/desktop/aa364639(v=vs.85).aspx
         internal enum HTTP_SERVER_PROPERTY
         {
             HttpServerAuthenticationProperty,
             HttpServerLoggingProperty,
             HttpServerQosProperty,
             HttpServerTimeoutsProperty,
-            HttpServerQueueLengthProperty,
+            HttpServerQueueLengthProperty, // The connections property limits the number of requests in the request queue. This is a ULONG.
             HttpServerStateProperty,
             HttpServer503VerbosityProperty,
             HttpServerBindingProperty,
@@ -109,13 +121,14 @@ namespace Happer.TestHapperServer
             HttpServerProtectionLevelProperty,
         }
 
+        // https://msdn.microsoft.com/en-us/library/windows/desktop/aa364501(v=vs.85).aspx
         [DllImport("httpapi.dll", CallingConvention = CallingConvention.StdCall)]
         internal static extern uint HttpSetRequestQueueProperty(
-            CriticalHandle requestQueueHandle,
-            HTTP_SERVER_PROPERTY serverProperty,
-            ref uint pPropertyInfo,
-            uint propertyInfoLength,
-            uint reserved,
-            IntPtr pReserved);
+            CriticalHandle requestQueueHandle,   // _In_       HANDLE               Handle,
+            HTTP_SERVER_PROPERTY serverProperty, // _In_       HTTP_SERVER_PROPERTY Property,
+            ref uint pPropertyInfo,              // _In_       PVOID                pPropertyInformation,
+            uint propertyInfoLength,             // _In_       ULONG                PropertyInformationLength,
+            uint reserved,                       // _Reserved_ ULONG                Reserved,
+            IntPtr pReserved);                   // _Reserved_ PVOID                pReserved
     }
 }
