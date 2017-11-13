@@ -22,7 +22,7 @@ namespace Happer.TestNancyServer
                 Console.ReadKey();
             }
 
-            Console.WriteLine("Stopped. Good bye!");
+            Console.WriteLine("Server is stopped.");
         }
     }
 }

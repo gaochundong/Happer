@@ -43,7 +43,7 @@ namespace Happer.TestHttpServer
 
             // http://localhost:3202/thread
             // http://localhost:3202/sleep
-            container.AddModule(new TestModule());
+            container.AddModule(new ThreadModule());
 
             // http://localhost:3202/plaintext
             container.AddModule(new PlainModule());

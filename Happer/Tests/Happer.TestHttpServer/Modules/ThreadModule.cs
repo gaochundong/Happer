@@ -8,14 +8,12 @@ using Logrila.Logging;
 
 namespace Happer.TestHttpServer
 {
-    public class TestModule : Module
+    public class ThreadModule : Module
     {
-        private static ILog _log = Logger.Get<TestModule>();
+        private static ILog _log = Logger.Get<ThreadModule>();
 
-        public TestModule()
+        public ThreadModule()
         {
-            //ShowThreadPoolSettings();
-
             Get("/thread", x =>
             {
                 Print("Thread[{0}]", Thread.CurrentThread.GetDescription());
@@ -83,21 +81,6 @@ namespace Happer.TestHttpServer
             Console.WriteLine(string.Format("{0}|{1}",
                 DateTime.Now.ToString(@"yyyy-MM-dd HH:mm:ss.fffffff"),
                 string.Format(format, args)));
-        }
-
-        static void ShowThreadPoolSettings()
-        {
-            int minWorkerThreads, maxWorkerThreads;
-            int minCompletionPortThreads, maxCompletionPortThreads;
-            int availableWorkerThreads, availableCompletionPortThreads;
-            ThreadPool.GetMinThreads(out minWorkerThreads, out minCompletionPortThreads);
-            ThreadPool.GetMaxThreads(out maxWorkerThreads, out maxCompletionPortThreads);
-            ThreadPool.GetAvailableThreads(out availableWorkerThreads, out availableCompletionPortThreads);
-
-            _log.DebugFormat("Current thread pool settings:");
-            _log.DebugFormat("   Worker thread: " + minWorkerThreads + " / " + maxWorkerThreads);
-            _log.DebugFormat("       IO thread: " + minCompletionPortThreads + " / " + maxCompletionPortThreads);
-            _log.DebugFormat("Available thread: " + availableWorkerThreads + " / " + availableCompletionPortThreads);
         }
     }
 
