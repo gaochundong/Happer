@@ -2,9 +2,9 @@
 
 namespace Happer.TestHttpServer
 {
-    public class BenchmarkModule : Module
+    public class PlainModule : Module
     {
-        public BenchmarkModule()
+        public PlainModule()
         {
             Get("/plaintext", _ => "Hello, World!");
         }

@@ -46,7 +46,7 @@ namespace Happer.TestHttpServer
             container.AddModule(new TestModule());
 
             // http://localhost:3202/plaintext
-            container.AddModule(new BenchmarkModule());
+            container.AddModule(new PlainModule());
 
             // http://localhost:3202/metrics
             // http://localhost:3202/metrics/ping

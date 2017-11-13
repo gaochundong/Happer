@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Happer.TestBenchmarker
+namespace Happer.TestHttpBenchmarker
 {
     class Program
     {

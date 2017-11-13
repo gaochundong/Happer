@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Happer.TestBenchmarker")]
+[assembly: AssemblyTitle("Happer.TestNancyServer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Happer.TestBenchmarker")]
+[assembly: AssemblyProduct("Happer.TestNancyServer")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("93744d90-ec58-41bc-ac06-697b25d89475")]
+[assembly: Guid("5d3bda72-585e-43f8-a00f-a60fe4791317")]
 
 // Version information for an assembly consists of the following four values:
 //
